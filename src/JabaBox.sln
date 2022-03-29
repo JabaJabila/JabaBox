@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JabaBox.Core", "JabaBox.Core\JabaBox.Core.csproj", "{C64B52FF-B20B-4C95-BD99-E5B1ABE008F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JabaBox.DataAccess", "JabaBox.DataAccess\JabaBox.DataAccess.csproj", "{879D4D7B-EC62-452A-8B98-304C7EEEED9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JabaBox.Core.UnitTests", "JabaBox.Core.UnitTests\JabaBox.Core.UnitTests.csproj", "{060241DB-C977-4944-9E4E-B22D9D08FCF4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C64B52FF-B20B-4C95-BD99-E5B1ABE008F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C64B52FF-B20B-4C95-BD99-E5B1ABE008F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C64B52FF-B20B-4C95-BD99-E5B1ABE008F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C64B52FF-B20B-4C95-BD99-E5B1ABE008F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{879D4D7B-EC62-452A-8B98-304C7EEEED9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{879D4D7B-EC62-452A-8B98-304C7EEEED9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{879D4D7B-EC62-452A-8B98-304C7EEEED9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{879D4D7B-EC62-452A-8B98-304C7EEEED9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{060241DB-C977-4944-9E4E-B22D9D08FCF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{060241DB-C977-4944-9E4E-B22D9D08FCF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{060241DB-C977-4944-9E4E-B22D9D08FCF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{060241DB-C977-4944-9E4E-B22D9D08FCF4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
