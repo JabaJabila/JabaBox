@@ -50,7 +50,7 @@ public class StorageService : IStorageService
         if (FindDirectory(account, name) is not null)
             throw new DirectoryException($"Directory with name \'{name}\' already exist");
 
-        var directory = new StorageDirectory(name);
+        var directory = new StorageDirectory(name, baseDirectory);
         baseDirectory.Directories.ToList().Add(directory);
         _baseDirectoryRepository.UpdateBaseDirectory(baseDirectory);
         return _storageDirectoryRepository.CreateDirectory(directory);
@@ -104,7 +104,7 @@ public class StorageService : IStorageService
         if (BytesAvailable(account) < data.Length)
             throw new FileException($"Not enough space in storage for account \'{account.Login}\'");
         
-        var file = _storageFileRepository.AddFile(new StorageFile(name, state, data.Length), data, directory);
+        var file = _storageFileRepository.AddFile(new StorageFile(name, state, data.Length, directory), data, directory);
         directory.Files.ToList().Add(file);
         baseDir.BytesOccupied += data.Length;
         _baseDirectoryRepository.UpdateBaseDirectory(baseDir);
