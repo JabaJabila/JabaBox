@@ -26,6 +26,6 @@ public class AccountInfo
     
     public Guid Id { get; private init; }
     public string Login { get; private init; }
-    public string Password { get; private init; }
-    public int GigabytesAvailable { get; private init; }
+    public string Password { get; set; }
+    public int GigabytesAvailable { get; set; }
 }
