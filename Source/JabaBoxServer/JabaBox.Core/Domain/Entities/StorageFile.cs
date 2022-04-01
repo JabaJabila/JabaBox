@@ -3,9 +3,9 @@ using JabaBox.Core.Domain.Exceptions;
 
 namespace JabaBox.Core.Domain.Entities;
 
-public class File
+public class StorageFile
 {
-    public File(string name, FileState state, long size)
+    public StorageFile(string name, FileState state, long size)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new FileException("File name can't be empty");
@@ -18,7 +18,7 @@ public class File
         ByteSize = size;
     }
 
-    private File()
+    private StorageFile()
     {
     }
     

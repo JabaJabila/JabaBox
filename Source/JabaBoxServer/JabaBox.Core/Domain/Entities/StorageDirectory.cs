@@ -2,26 +2,26 @@
 
 namespace JabaBox.Core.Domain.Entities;
 
-public class Directory
+public class StorageDirectory
 {
-    private List<File> _files;
+    private List<StorageFile> _files;
 
-    public Directory(string name)
+    public StorageDirectory(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new DirectoryException("Directory name can't be null");
 
-        _files = new List<File>();
+        _files = new List<StorageFile>();
         Name = name;
     }
 
-    private Directory()
+    private StorageDirectory()
     {
     }
     
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public IReadOnlyCollection<File> Files
+    public IReadOnlyCollection<StorageFile> Files
     {
         get => _files;
         set => _files = value.ToList() ?? throw new ArgumentNullException(nameof(value));

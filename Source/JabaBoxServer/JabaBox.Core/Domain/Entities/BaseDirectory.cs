@@ -4,14 +4,14 @@ namespace JabaBox.Core.Domain.Entities;
 
 public class BaseDirectory
 {
-    private List<Directory> _directories;
+    private List<StorageDirectory> _directories;
     
     public BaseDirectory(Guid id)
     {
         if (id == Guid.Empty)
             throw new DirectoryException("Impossible to create base directory for empty guid id");
 
-        _directories = new List<Directory>();
+        _directories = new List<StorageDirectory>();
         BytesOccupied = 0;
     }
 
@@ -21,7 +21,7 @@ public class BaseDirectory
     
     public Guid UserId { get; private init; }
     public long BytesOccupied { get; set; }
-    public IReadOnlyCollection<Directory> Directories
+    public IReadOnlyCollection<StorageDirectory> Directories
     { 
         get => _directories;
         set => _directories = value.ToList() ?? throw new ArgumentNullException(nameof(value));
