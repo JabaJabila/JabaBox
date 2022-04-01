@@ -20,8 +20,4 @@
       <ProjectReference Include="..\JabaBoxServer.DataAccess\JabaBoxServer.DataAccess.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="RepositoriesForTests" />
-    </ItemGroup>
-
 </Project>

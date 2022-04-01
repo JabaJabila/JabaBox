@@ -18,7 +18,7 @@ public class AccountService : IAccountService
 
     public AccountInfo GetAccount(string login)
     {
-        AccountInfo? account = _accountInfoRepository.FindAccountByLogin(login);
+        AccountInfo? account = _accountInfoRepository.FindAccountByLogin(login).Result;
         if (account is null)
             throw new AccountInfoException($"Account with login \'{login}\' not found");
 
@@ -27,7 +27,7 @@ public class AccountService : IAccountService
 
     public AccountInfo GetAccount(Guid id)
     {
-        AccountInfo? account = _accountInfoRepository.FindAccountById(id);
+        AccountInfo? account = _accountInfoRepository.FindAccountById(id).Result;
         if (account is null)
             throw new AccountInfoException($"Account with id \'{id}\' not found");
 
@@ -45,11 +45,11 @@ public class AccountService : IAccountService
         if (gigabytesAvailable <= 0)
             throw new AccountInfoException("Impossible to set limit for <= 0 gigabytes");
         
-        if (_accountInfoRepository.CheckIfLoginExists(login))
+        if (_accountInfoRepository.CheckIfLoginExists(login).Result)
             throw new AccountInfoException($"Account with login \'{login}\' already exists");
 
         AccountInfo account = _accountInfoRepository
-            .SaveAccountInfo(new AccountInfo(login, password, gigabytesAvailable));
+            .SaveAccountInfo(new AccountInfo(login, password, gigabytesAvailable)).Result;
 
         _baseDirectoryRepository.CreateBaseDirectory(account.Id);
         return account;
@@ -81,6 +81,6 @@ public class AccountService : IAccountService
             throw new AccountInfoException("Impossible to set limit for <= 0 gigabytes");
 
         account.GigabytesAvailable = newGigabytesAvailable;
-        return _accountInfoRepository.UpdateAccountInfo(account);
+        return _accountInfoRepository.UpdateAccountInfo(account).Result;
     }
 }

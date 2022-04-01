@@ -5,17 +5,17 @@ namespace JabaBoxServer.DataAccess.Repositories;
 
 public class BaseDirectoryRepository : IBaseDirectoryRepository
 {
-    public void CreateBaseDirectory(Guid accountId)
+    public async void CreateBaseDirectory(Guid accountId)
     {
         throw new NotImplementedException();
     }
 
-    public BaseDirectory GetBaseDirectoryById(Guid accountId)
+    public async Task<BaseDirectory> GetBaseDirectoryById(Guid accountId)
     {
         throw new NotImplementedException();
     }
 
-    public BaseDirectory UpdateBaseDirectory(BaseDirectory directory)
+    public async Task<BaseDirectory> UpdateBaseDirectory(BaseDirectory directory)
     {
         throw new NotImplementedException();
     }

@@ -5,27 +5,27 @@ namespace JabaBoxServer.DataAccess.Repositories;
 
 public class AccountInfoRepository : IAccountInfoRepository
 {
-    public bool CheckIfLoginExists(string login)
+    public async Task<bool> CheckIfLoginExists(string login)
     {
         throw new NotImplementedException();
     }
 
-    public AccountInfo SaveAccountInfo(AccountInfo accountInfo)
+    public async Task<AccountInfo> SaveAccountInfo(AccountInfo account)
     {
         throw new NotImplementedException();
     }
 
-    public AccountInfo? FindAccountByLogin(string login)
+    public async Task<AccountInfo?> FindAccountByLogin(string login)
     {
         throw new NotImplementedException();
     }
 
-    public AccountInfo? FindAccountById(Guid id)
+    public async Task<AccountInfo?> FindAccountById(Guid id)
     {
         throw new NotImplementedException();
     }
 
-    public AccountInfo UpdateAccountInfo(AccountInfo account)
+    public async Task<AccountInfo> UpdateAccountInfo(AccountInfo account)
     {
         throw new NotImplementedException();
     }

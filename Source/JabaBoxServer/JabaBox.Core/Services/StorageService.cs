@@ -27,7 +27,7 @@ public class StorageService : IStorageService
         ArgumentNullException.ThrowIfNull(account);
         ArgumentNullException.ThrowIfNull(name);
 
-        return _storageDirectoryRepository.FindDirectory(account, name);
+        return _storageDirectoryRepository.FindDirectory(account, name).Result;
     }
 
     public StorageFile? FindFile(AccountInfo account, StorageDirectory directory, string name)
@@ -36,7 +36,7 @@ public class StorageService : IStorageService
         ArgumentNullException.ThrowIfNull(directory);
         ArgumentNullException.ThrowIfNull(name);
 
-        return _storageFileRepository.FindFile(account, directory, name);
+        return _storageFileRepository.FindFile(account, directory, name).Result;
     }
 
     public StorageDirectory CreateDirectory(AccountInfo account, string name)
@@ -45,7 +45,7 @@ public class StorageService : IStorageService
         if (string.IsNullOrWhiteSpace(name))
             throw new DirectoryException("Name of directory can't be null or empty");
         
-        BaseDirectory baseDirectory = _baseDirectoryRepository.GetBaseDirectoryById(account.Id);
+        BaseDirectory baseDirectory = _baseDirectoryRepository.GetBaseDirectoryById(account.Id).Result;
 
         if (FindDirectory(account, name) is not null)
             throw new DirectoryException($"Directory with name \'{name}\' already exist");
@@ -53,7 +53,7 @@ public class StorageService : IStorageService
         var directory = new StorageDirectory(name, baseDirectory);
         baseDirectory.Directories.ToList().Add(directory);
         _baseDirectoryRepository.UpdateBaseDirectory(baseDirectory);
-        return _storageDirectoryRepository.CreateDirectory(directory);
+        return _storageDirectoryRepository.CreateDirectory(directory).Result;
     }
 
     public StorageDirectory RenameDirectory(AccountInfo account, StorageDirectory directory, string newName)
@@ -64,12 +64,12 @@ public class StorageService : IStorageService
 
         CheckIfDirectoryExists(account, directory);
 
-        var baseDir = _baseDirectoryRepository.GetBaseDirectoryById(account.Id);
+        var baseDir = _baseDirectoryRepository.GetBaseDirectoryById(account.Id).Result;
         if (baseDir.Directories.Any(d => d.Name == newName))
             throw new DirectoryException($"Directory with name \'{newName}\' already exists");
         
         directory.Name = newName;
-        return _storageDirectoryRepository.UpdateStorageDirectory(directory);
+        return _storageDirectoryRepository.UpdateStorageDirectory(directory).Result;
     }
 
     public void DeleteDirectory(AccountInfo account, StorageDirectory directory)
@@ -77,7 +77,7 @@ public class StorageService : IStorageService
         ArgumentNullException.ThrowIfNull(account);
         ArgumentNullException.ThrowIfNull(directory);
 
-        BaseDirectory baseDirectory = _baseDirectoryRepository.GetBaseDirectoryById(account.Id);
+        BaseDirectory baseDirectory = _baseDirectoryRepository.GetBaseDirectoryById(account.Id).Result;
         if (!baseDirectory.Directories.Any(d => d.Id == directory.Id && d.Name == directory.Name))
             throw new DirectoryException($"Directory with name \'{directory.Name}\' doesn't exist");
         
@@ -95,7 +95,7 @@ public class StorageService : IStorageService
         if (string.IsNullOrWhiteSpace(name))
             throw new DirectoryException("Name of file can't be null or empty");
 
-        var baseDir = _baseDirectoryRepository.GetBaseDirectoryById(account.Id);
+        var baseDir = _baseDirectoryRepository.GetBaseDirectoryById(account.Id).Result;
         CheckIfDirectoryExists(account, directory);
 
         if (directory.Files.Any(f => f.Name == name))
@@ -104,7 +104,8 @@ public class StorageService : IStorageService
         if (BytesAvailable(account) < data.Length)
             throw new FileException($"Not enough space in storage for account \'{account.Login}\'");
         
-        var file = _storageFileRepository.AddFile(new StorageFile(name, state, data.Length, directory), data, directory);
+        var file = _storageFileRepository
+            .AddFile(new StorageFile(name, state, data.Length, directory), data, directory).Result;
         directory.Files.ToList().Add(file);
         baseDir.BytesOccupied += data.Length;
         _baseDirectoryRepository.UpdateBaseDirectory(baseDir);
@@ -127,7 +128,7 @@ public class StorageService : IStorageService
             throw new FileException($"File with name \'{newName}\' already exists");
         
         file.Name = newName;
-        return _storageFileRepository.UpdateFile(file);
+        return _storageFileRepository.UpdateFile(file).Result;
     }
 
     public void DeleteFile(AccountInfo account, StorageDirectory directory, StorageFile file)
@@ -148,7 +149,7 @@ public class StorageService : IStorageService
     {
         ArgumentNullException.ThrowIfNull(account);
 
-        var baseDir = _baseDirectoryRepository.GetBaseDirectoryById(account.Id);
+        var baseDir = _baseDirectoryRepository.GetBaseDirectoryById(account.Id).Result;
         return TranslateGigabytesToBytes(account.GigabytesAvailable) - baseDir.BytesOccupied;
     }
 

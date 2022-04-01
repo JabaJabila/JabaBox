@@ -5,22 +5,22 @@ namespace JabaBoxServer.DataAccess.Repositories;
 
 public class StorageDirectoryRepository : IStorageDirectoryRepository
 {
-    public StorageDirectory? FindDirectory(AccountInfo account, string name)
+    public async Task<StorageDirectory?> FindDirectory(AccountInfo account, string name)
     {
         throw new NotImplementedException();
     }
 
-    public StorageDirectory UpdateStorageDirectory(StorageDirectory directory)
+    public async Task<StorageDirectory> UpdateStorageDirectory(StorageDirectory directory)
     {
         throw new NotImplementedException();
     }
 
-    public StorageDirectory CreateDirectory(StorageDirectory directory)
+    public async Task<StorageDirectory> CreateDirectory(StorageDirectory directory)
     {
         throw new NotImplementedException();
     }
 
-    public void DeleteDirectory(StorageDirectory directory)
+    public async void DeleteDirectory(StorageDirectory directory)
     {
         throw new NotImplementedException();
     }

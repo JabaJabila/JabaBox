@@ -4,9 +4,9 @@ namespace JabaBox.Core.RepositoryAbstractions;
 
 public interface IAccountInfoRepository
 {
-    bool CheckIfLoginExists(string login);
-    AccountInfo SaveAccountInfo(AccountInfo accountInfo);
-    AccountInfo? FindAccountByLogin(string login);
-    AccountInfo? FindAccountById(Guid id);
-    AccountInfo UpdateAccountInfo(AccountInfo account);
+    Task<bool> CheckIfLoginExists(string login);
+    Task<AccountInfo> SaveAccountInfo(AccountInfo account);
+    Task<AccountInfo?> FindAccountByLogin(string login);
+    Task<AccountInfo?> FindAccountById(Guid id);
+    Task<AccountInfo> UpdateAccountInfo(AccountInfo account);
 }
