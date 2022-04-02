@@ -4,7 +4,7 @@ namespace JabaBox.Core.RepositoryAbstractions;
 
 public interface IBaseDirectoryRepository
 {
-    Task CreateBaseDirectory(Guid accountId);
-    Task<BaseDirectory> GetBaseDirectoryById(Guid accountId);
-    Task<BaseDirectory> UpdateBaseDirectory(BaseDirectory directory);
+    void CreateBaseDirectory(Guid accountId);
+    BaseDirectory GetBaseDirectoryById(Guid accountId);
+    BaseDirectory UpdateBaseDirectory(BaseDirectory directory);
 }

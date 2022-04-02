@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using JabaBox.Core.Domain.Entities;
 using JabaBox.Core.RepositoryAbstractions;
@@ -17,40 +18,40 @@ public class InMemoryAccountInfoRepository : IAccountInfoRepository
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
     
-    public async Task<bool> CheckIfLoginExists(string login)
+    public bool CheckIfLoginExists(string login)
     {
         ArgumentNullException.ThrowIfNull(login);
-        return await _context.AccountInfos.AnyAsync(a => a.Login == login);
+        return _context.AccountInfos.Any(a => a.Login == login);
     }
 
-    public async Task<AccountInfo> SaveAccountInfo(AccountInfo account)
+    public AccountInfo SaveAccountInfo(AccountInfo account)
     {
         ArgumentNullException.ThrowIfNull(account);
         
-        var temp = await _context.AccountInfos.AddAsync(account);
+        var temp = _context.AccountInfos.Add(account);
         account = temp.Entity;
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
         return account;
     }
 
-    public async Task<AccountInfo?> FindAccountByLogin(string login)
+    public AccountInfo? FindAccountByLogin(string login)
     {
         ArgumentNullException.ThrowIfNull(login);
         
-        return await _context.AccountInfos.FirstOrDefaultAsync(a => a.Login == login);
+        return _context.AccountInfos.FirstOrDefault(a => a.Login == login);
     }
 
-    public async Task<AccountInfo?> FindAccountById(Guid id)
+    public AccountInfo? FindAccountById(Guid id)
     {
-        return await _context.AccountInfos.FirstOrDefaultAsync(a => a.Id == id);
+        return _context.AccountInfos.FirstOrDefault(a => a.Id == id);
     }
 
-    public async Task<AccountInfo> UpdateAccountInfo(AccountInfo account)
+    public AccountInfo UpdateAccountInfo(AccountInfo account)
     {
         ArgumentNullException.ThrowIfNull(account);
         
         _context.AccountInfos.Update(account);
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
         return account;
     }
 }

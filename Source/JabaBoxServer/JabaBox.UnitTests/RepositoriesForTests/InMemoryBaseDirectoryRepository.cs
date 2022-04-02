@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using JabaBox.Core.Domain.Entities;
 using JabaBox.Core.Domain.Exceptions;
@@ -17,28 +18,28 @@ public class InMemoryBaseDirectoryRepository : IBaseDirectoryRepository
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
     
-    public async Task CreateBaseDirectory(Guid accountId)
+    public void CreateBaseDirectory(Guid accountId)
     {
         var baseDirectory = new BaseDirectory(accountId);
-        await _context.BaseDirectories.AddAsync(baseDirectory);
-        await _context.SaveChangesAsync();
+        _context.BaseDirectories.Add(baseDirectory);
+        _context.SaveChanges();
     }
 
-    public async Task<BaseDirectory> GetBaseDirectoryById(Guid accountId)
+    public BaseDirectory GetBaseDirectoryById(Guid accountId)
     {
-        var baseDirectory = await _context.BaseDirectories.FirstAsync(d => d.UserId == accountId);
-        await _context.Entry(baseDirectory).Collection(d => d.Directories).LoadAsync();
+        var baseDirectory = _context.BaseDirectories.First(d => d.UserId == accountId);
+        _context.Entry(baseDirectory).Collection(d => d.Directories).Load();
         if (baseDirectory is null)
             throw new DirectoryException($"Base directory not found for id \'{accountId}\'");
         
         return baseDirectory;
     }
 
-    public async Task<BaseDirectory> UpdateBaseDirectory(BaseDirectory directory)
+    public BaseDirectory UpdateBaseDirectory(BaseDirectory directory)
     {
         ArgumentNullException.ThrowIfNull(directory);
         _context.BaseDirectories.Update(directory);
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
         return directory;
     }
 }

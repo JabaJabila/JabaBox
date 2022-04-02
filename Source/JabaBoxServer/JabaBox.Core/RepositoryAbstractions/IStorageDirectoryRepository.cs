@@ -4,8 +4,8 @@ namespace JabaBox.Core.RepositoryAbstractions;
 
 public interface IStorageDirectoryRepository
 {
-    Task<StorageDirectory?> FindDirectory(AccountInfo account, string name);
-    Task<StorageDirectory> UpdateStorageDirectory(StorageDirectory directory);
-    Task<StorageDirectory> CreateDirectory(StorageDirectory directory);
-    Task DeleteDirectory(StorageDirectory directory);
+    StorageDirectory? FindDirectory(AccountInfo account, string name);
+    StorageDirectory UpdateStorageDirectory(StorageDirectory directory);
+    StorageDirectory CreateDirectory(StorageDirectory directory);
+    void DeleteDirectory(StorageDirectory directory);
 }

@@ -18,7 +18,7 @@ public class AccountService : IAccountService
 
     public AccountInfo GetAccount(string login)
     {
-        AccountInfo? account = _accountInfoRepository.FindAccountByLogin(login).Result;
+        AccountInfo? account = _accountInfoRepository.FindAccountByLogin(login);
         if (account is null)
             throw new AccountInfoException($"Account with login \'{login}\' not found");
 
@@ -27,7 +27,7 @@ public class AccountService : IAccountService
 
     public AccountInfo GetAccount(Guid id)
     {
-        AccountInfo? account = _accountInfoRepository.FindAccountById(id).Result;
+        AccountInfo? account = _accountInfoRepository.FindAccountById(id);
         if (account is null)
             throw new AccountInfoException($"Account with id \'{id}\' not found");
 
@@ -45,11 +45,11 @@ public class AccountService : IAccountService
         if (gigabytesAvailable <= 0)
             throw new AccountInfoException("Impossible to set limit for <= 0 gigabytes");
         
-        if (_accountInfoRepository.CheckIfLoginExists(login).Result)
+        if (_accountInfoRepository.CheckIfLoginExists(login))
             throw new AccountInfoException($"Account with login \'{login}\' already exists");
 
         AccountInfo account = _accountInfoRepository
-            .SaveAccountInfo(new AccountInfo(login, password, gigabytesAvailable)).Result;
+            .SaveAccountInfo(new AccountInfo(login, password, gigabytesAvailable));
 
         _baseDirectoryRepository.CreateBaseDirectory(account.Id);
         return account;
@@ -81,10 +81,10 @@ public class AccountService : IAccountService
             throw new AccountInfoException("Impossible to set limit for <= 0 gigabytes");
 
         if ((long) newGigabytesAvailable * 1024 * 1024 * 1024
-            < _baseDirectoryRepository.GetBaseDirectoryById(account.Id).Result.BytesOccupied)
+            < _baseDirectoryRepository.GetBaseDirectoryById(account.Id).BytesOccupied)
             throw new AccountInfoException("Not enough space left");
 
         account.GigabytesAvailable = newGigabytesAvailable;
-        return _accountInfoRepository.UpdateAccountInfo(account).Result;
+        return _accountInfoRepository.UpdateAccountInfo(account);
     }
 }

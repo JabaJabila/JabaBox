@@ -2,7 +2,6 @@
 using JabaBox.Core.RepositoryAbstractions;
 using JabaBoxServer.DataAccess.DataBaseContexts;
 using JabaBoxServer.DataAccess.Repositories.FileSystemStorages.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace JabaBoxServer.DataAccess.Repositories;
 
@@ -17,44 +16,52 @@ public class StorageFileRepository : IStorageFileRepository
         _storage = storage ?? throw new ArgumentNullException(nameof(storage));
     }
     
-    public async Task<StorageFile?> FindFile(AccountInfo account, StorageDirectory directory, string name)
+    public StorageFile? FindFile(AccountInfo account, StorageDirectory directory, string name)
     {
         ArgumentNullException.ThrowIfNull(account);
         ArgumentNullException.ThrowIfNull(directory);
         ArgumentNullException.ThrowIfNull(name);
 
-        return await _context.StorageFiles.FirstOrDefaultAsync(f => f.Directory.Id == directory.Id && f.Name == name);
+        var file = _context.StorageFiles
+            .FirstOrDefault(f => f.Directory.Id == directory.Id && f.Name == name);
+
+        if (file is null)
+            return file;
+
+        _context.Entry(file).Reference(f => f.Directory).Load(); 
+        _context.Entry(file.Directory).Reference(d => d.BaseDirectory).Load();
+        return file;
     }
 
-    public async Task<StorageFile> AddFile(StorageFile storageFile, byte[] data, StorageDirectory directory)
+    public StorageFile AddFile(StorageFile storageFile, byte[] data, StorageDirectory directory)
     {
         ArgumentNullException.ThrowIfNull(storageFile);
         ArgumentNullException.ThrowIfNull(data);
         ArgumentNullException.ThrowIfNull(directory);
 
-        var temp = await _context.StorageFiles.AddAsync(storageFile);
+        var temp = _context.StorageFiles.Add(storageFile);
         storageFile = temp.Entity;
         _storage.CreateStorageFile(directory.BaseDirectory.UserId, directory.Id, storageFile.Id, data);
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
         return storageFile;
     }
 
-    public async Task<StorageFile> UpdateFile(StorageFile file)
+    public StorageFile UpdateFile(StorageFile file)
     {
         ArgumentNullException.ThrowIfNull(file);
 
         _context.StorageFiles.Update(file);
         _storage.CheckStorageFile(file.Directory.BaseDirectory.UserId, file.Directory.Id, file.Id);
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
         return file;
     }
 
-    public async void DeleteFile(StorageFile file)
+    public void DeleteFile(StorageFile file)
     {
         ArgumentNullException.ThrowIfNull(file);
 
         _context.StorageFiles.Remove(file);
         _storage.DeleteStorageFile(file.Directory.BaseDirectory.UserId, file.Directory.Id, file.Id);
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
     }
 }

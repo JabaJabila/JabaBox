@@ -3,7 +3,6 @@ using JabaBox.Core.Domain.Exceptions;
 using JabaBox.Core.RepositoryAbstractions;
 using JabaBoxServer.DataAccess.DataBaseContexts;
 using JabaBoxServer.DataAccess.Repositories.FileSystemStorages.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace JabaBoxServer.DataAccess.Repositories;
 
@@ -18,30 +17,30 @@ public class BaseDirectoryRepository : IBaseDirectoryRepository
         _storage = storage ?? throw new ArgumentNullException(nameof(storage));
     }
     
-    public async void CreateBaseDirectory(Guid accountId)
+    public void CreateBaseDirectory(Guid accountId)
     {
         var baseDirectory = new BaseDirectory(accountId);
         _storage.CreateBaseDirectory(accountId);
-        await _context.BaseDirectories.AddAsync(baseDirectory);
-        await _context.SaveChangesAsync();
+        _context.BaseDirectories.Add(baseDirectory);
+        _context.SaveChanges();
     }
 
-    public async Task<BaseDirectory> GetBaseDirectoryById(Guid accountId)
+    public BaseDirectory GetBaseDirectoryById(Guid accountId)
     {
-        var baseDirectory = await _context.BaseDirectories.FirstOrDefaultAsync(d => d.UserId == accountId);
-        _storage.CheckBaseDirectory(accountId);
+        var baseDirectory = _context.BaseDirectories.First(d => d.UserId == accountId);
+        _context.Entry(baseDirectory).Collection(d => d.Directories).Load();
         if (baseDirectory is null)
             throw new DirectoryException($"Base directory not found for id \'{accountId}\'");
         
         return baseDirectory;
     }
 
-    public async Task<BaseDirectory> UpdateBaseDirectory(BaseDirectory directory)
+    public BaseDirectory UpdateBaseDirectory(BaseDirectory directory)
     {
         ArgumentNullException.ThrowIfNull(directory);
         _context.BaseDirectories.Update(directory);
         _storage.CheckBaseDirectory(directory.UserId);
-        await _context.SaveChangesAsync();
+        _context.SaveChanges();
         return directory;
     }
 }
