@@ -5,6 +5,7 @@ namespace JabaBox.Core.Domain.ServicesAbstractions;
 
 public interface IStorageService
 {
+    BaseDirectory GetBaseDirectory(AccountInfo account);
     StorageDirectory? FindDirectory(AccountInfo account, string name);
     StorageFile? FindFile(AccountInfo account, StorageDirectory directory, string name);
     

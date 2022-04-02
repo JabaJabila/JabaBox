@@ -5,5 +5,5 @@ namespace JabaBox.WebApi.Mappers.Abstractions;
 
 public interface IBaseDirectoryMapper
 {
-    BaseDirectoryDto EntityToAccountInfoDto(BaseDirectory directory);
+    BaseDirectoryDto EntityToDto(BaseDirectory directory);
 }

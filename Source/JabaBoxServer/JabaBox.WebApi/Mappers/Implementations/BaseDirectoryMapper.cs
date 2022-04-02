@@ -6,8 +6,9 @@ namespace JabaBox.WebApi.Mappers.Implementations;
 
 public class BaseDirectoryMapper : IBaseDirectoryMapper
 {
-    public BaseDirectoryDto EntityToAccountInfoDto(BaseDirectory directory)
+    public BaseDirectoryDto EntityToDto(BaseDirectory directory)
     {
+        ArgumentNullException.ThrowIfNull(directory);
         var dirNames = directory.Directories.Select(d => d.Name).ToList();
         return new BaseDirectoryDto
         {

@@ -5,5 +5,5 @@ namespace JabaBox.WebApi.Mappers.Abstractions;
 
 public interface IStorageFileMapper
 {
-    StorageFileDto EntityToAccountInfoDto(StorageFile file);
+    StorageFileDto EntityToDto(StorageFile file);
 }

@@ -20,9 +20,16 @@ public class InMemoryStorageDirectoryRepository : IStorageDirectoryRepository
     {
         ArgumentNullException.ThrowIfNull(account);
         ArgumentNullException.ThrowIfNull(name);
-        
-        return await _context.StorageDirectories
+        var directory = await _context.StorageDirectories
             .FirstOrDefaultAsync(d => d.Name == name && d.BaseDirectory.UserId == account.Id);
+
+        if (directory is null)
+            return directory;
+
+        await _context.Entry(directory).Reference(d => d.BaseDirectory).LoadAsync();
+        await _context.Entry(directory).Collection(d => d.Files).LoadAsync();
+
+        return directory;
     }
 
     public async Task<StorageDirectory> UpdateStorageDirectory(StorageDirectory directory)
@@ -44,7 +51,7 @@ public class InMemoryStorageDirectoryRepository : IStorageDirectoryRepository
         return directory;
     }
 
-    public async void DeleteDirectory(StorageDirectory directory)
+    public async Task DeleteDirectory(StorageDirectory directory)
     {
         ArgumentNullException.ThrowIfNull(directory);
 

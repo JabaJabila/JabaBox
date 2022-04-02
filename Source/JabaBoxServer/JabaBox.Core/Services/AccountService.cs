@@ -80,6 +80,10 @@ public class AccountService : IAccountService
         if (newGigabytesAvailable <= 0)
             throw new AccountInfoException("Impossible to set limit for <= 0 gigabytes");
 
+        if ((long) newGigabytesAvailable * 1024 * 1024 * 1024
+            < _baseDirectoryRepository.GetBaseDirectoryById(account.Id).Result.BytesOccupied)
+            throw new AccountInfoException("Not enough space left");
+
         account.GigabytesAvailable = newGigabytesAvailable;
         return _accountInfoRepository.UpdateAccountInfo(account).Result;
     }

@@ -6,8 +6,9 @@ namespace JabaBox.WebApi.Mappers.Implementations;
 
 public class StorageDirectoryMapper : IStorageDirectoryMapper
 {
-    public StorageDirectoryDto EntityToAccountInfoDto(StorageDirectory directory)
+    public StorageDirectoryDto EntityToDto(StorageDirectory directory)
     {
+        ArgumentNullException.ThrowIfNull(directory);
         var fileNames = directory.Files.Select(f => f.Name).ToList();
         return new StorageDirectoryDto
         {

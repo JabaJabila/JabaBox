@@ -17,7 +17,7 @@ public class InMemoryBaseDirectoryRepository : IBaseDirectoryRepository
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
     
-    public async void CreateBaseDirectory(Guid accountId)
+    public async Task CreateBaseDirectory(Guid accountId)
     {
         var baseDirectory = new BaseDirectory(accountId);
         await _context.BaseDirectories.AddAsync(baseDirectory);
@@ -26,7 +26,8 @@ public class InMemoryBaseDirectoryRepository : IBaseDirectoryRepository
 
     public async Task<BaseDirectory> GetBaseDirectoryById(Guid accountId)
     {
-        var baseDirectory = await _context.BaseDirectories.FirstOrDefaultAsync(d => d.UserId == accountId);
+        var baseDirectory = await _context.BaseDirectories.FirstAsync(d => d.UserId == accountId);
+        await _context.Entry(baseDirectory).Collection(d => d.Directories).LoadAsync();
         if (baseDirectory is null)
             throw new DirectoryException($"Base directory not found for id \'{accountId}\'");
         

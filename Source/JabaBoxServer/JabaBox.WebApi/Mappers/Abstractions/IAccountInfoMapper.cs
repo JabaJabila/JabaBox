@@ -5,5 +5,5 @@ namespace JabaBox.WebApi.Mappers.Abstractions;
 
 public interface IAccountInfoMapper : IMapper
 {
-    AccountInfoDto EntityToAccountInfoDto(AccountInfo accountInfo);
+    AccountInfoDto EntityToDto(AccountInfo accountInfo);
 }

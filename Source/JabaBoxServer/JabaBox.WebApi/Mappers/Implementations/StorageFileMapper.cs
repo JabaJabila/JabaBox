@@ -7,8 +7,9 @@ namespace JabaBox.WebApi.Mappers.Implementations;
 
 public class StorageFileMapper : IStorageFileMapper
 {
-    public StorageFileDto EntityToAccountInfoDto(StorageFile file)
+    public StorageFileDto EntityToDto(StorageFile file)
     {
+        ArgumentNullException.ThrowIfNull(file);
         return new StorageFileDto
         {
             Id = file.Id,

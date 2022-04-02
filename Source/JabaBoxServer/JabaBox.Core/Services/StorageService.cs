@@ -22,6 +22,12 @@ public class StorageService : IStorageService
         _storageFileRepository = storeFileRepo ?? throw new ArgumentNullException(nameof(storeFileRepo));
     }
 
+    public BaseDirectory GetBaseDirectory(AccountInfo account)
+    {
+        ArgumentNullException.ThrowIfNull(account);
+        return _baseDirectoryRepository.GetBaseDirectoryById(account.Id).Result;
+    }
+
     public StorageDirectory? FindDirectory(AccountInfo account, string name)
     {
         ArgumentNullException.ThrowIfNull(account);

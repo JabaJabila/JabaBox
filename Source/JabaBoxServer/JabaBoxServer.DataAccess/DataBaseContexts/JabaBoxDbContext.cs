@@ -10,6 +10,7 @@ public sealed class JabaBoxDbContext : DbContext
     public JabaBoxDbContext(DbContextOptions<JabaBoxDbContext> options)
         : base(options)
     {
+        // Database.EnsureDeleted();
         Database.EnsureCreated();
     }
     
@@ -38,9 +39,4 @@ public sealed class JabaBoxDbContext : DbContext
 
             base.OnModelCreating(modelBuilder);
         }
-
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    // {
-    //     optionsBuilder.UseSqlite(@"D:\JabaBox\Source\JabaBoxServer\JabaBox.sqlite");
-    // }
 }

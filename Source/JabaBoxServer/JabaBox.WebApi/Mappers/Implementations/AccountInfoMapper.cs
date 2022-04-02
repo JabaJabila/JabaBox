@@ -7,8 +7,9 @@ namespace JabaBox.WebApi.Mappers.Implementations;
 
 public class AccountInfoMapper : IAccountInfoMapper
 {
-    public AccountInfoDto EntityToAccountInfoDto(AccountInfo accountInfo)
+    public AccountInfoDto EntityToDto(AccountInfo accountInfo)
     {
+        ArgumentNullException.ThrowIfNull(accountInfo);
         return new AccountInfoDto { 
             Id = accountInfo.Id,
             Login = accountInfo.Login,

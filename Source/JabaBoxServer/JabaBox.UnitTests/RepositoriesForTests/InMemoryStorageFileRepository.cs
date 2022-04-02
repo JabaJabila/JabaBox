@@ -22,7 +22,15 @@ public class InMemoryStorageFileRepository : IStorageFileRepository
         ArgumentNullException.ThrowIfNull(directory);
         ArgumentNullException.ThrowIfNull(name);
 
-        return await _context.StorageFiles.FirstOrDefaultAsync(f => f.Directory.Id == directory.Id && f.Name == name);
+        var file = await _context.StorageFiles
+            .FirstOrDefaultAsync(f => f.Directory.Id == directory.Id && f.Name == name);
+
+        if (file is null)
+            return file;
+
+        await _context.Entry(file).Reference(f => f.Directory).LoadAsync();
+        await _context.Entry(file.Directory).Reference(d => d.BaseDirectory).LoadAsync();
+        return file;
     }
 
     public async Task<StorageFile> AddFile(StorageFile storageFile, byte[] data, StorageDirectory directory)
@@ -46,7 +54,7 @@ public class InMemoryStorageFileRepository : IStorageFileRepository
         return file;
     }
 
-    public async void DeleteFile(StorageFile file)
+    public async Task DeleteFile(StorageFile file)
     {
         ArgumentNullException.ThrowIfNull(file);
 

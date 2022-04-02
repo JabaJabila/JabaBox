@@ -5,5 +5,5 @@ namespace JabaBox.WebApi.Mappers.Abstractions;
 
 public interface IStorageDirectoryMapper
 {
-    StorageDirectoryDto EntityToAccountInfoDto(StorageDirectory directory);
+    StorageDirectoryDto EntityToDto(StorageDirectory directory);
 }
