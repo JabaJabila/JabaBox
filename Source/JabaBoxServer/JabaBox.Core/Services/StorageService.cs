@@ -155,7 +155,7 @@ public class StorageService : IStorageService
 
     private static long TranslateGigabytesToBytes(int gigabytes)
     {
-        return gigabytes * 1024 * 1024 * 1024;
+        return gigabytes * 1024l * 1024l * 1024l;
     }
     
     private void CheckIfDirectoryExists(AccountInfo account, StorageDirectory directory)
@@ -169,6 +169,6 @@ public class StorageService : IStorageService
     {
         StorageFile? fileFound = FindFile(account, directory, file.Name);
         if (fileFound is null || fileFound.Id != file.Id)
-            throw new DirectoryException($"File with name \'{file.Name}\' doesn't exist");
+            throw new FileException($"File with name \'{file.Name}\' doesn't exist");
     }
 }

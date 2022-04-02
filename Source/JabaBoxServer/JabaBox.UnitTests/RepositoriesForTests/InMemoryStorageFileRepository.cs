@@ -22,7 +22,7 @@ public class InMemoryStorageFileRepository : IStorageFileRepository
         ArgumentNullException.ThrowIfNull(directory);
         ArgumentNullException.ThrowIfNull(name);
 
-        return await _context.StorageFiles.FirstOrDefaultAsync(f => f.Name == name);
+        return await _context.StorageFiles.FirstOrDefaultAsync(f => f.Directory.Id == directory.Id && f.Name == name);
     }
 
     public async Task<StorageFile> AddFile(StorageFile storageFile, byte[] data, StorageDirectory directory)
