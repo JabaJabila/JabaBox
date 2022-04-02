@@ -8,7 +8,6 @@ using JabaBoxServer.DataAccess.Repositories;
 using JabaBoxServer.DataAccess.Repositories.FileSystemStorages.Abstractions;
 using JabaBoxServer.DataAccess.Repositories.FileSystemStorages.Implementations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
