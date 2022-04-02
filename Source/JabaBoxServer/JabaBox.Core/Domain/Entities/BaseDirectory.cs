@@ -11,6 +11,7 @@ public class BaseDirectory
         if (id == Guid.Empty)
             throw new DirectoryException("Impossible to create base directory for empty guid id");
 
+        UserId = id;
         _directories = new List<StorageDirectory>();
         BytesOccupied = 0;
     }

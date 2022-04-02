@@ -2,16 +2,16 @@
 using System.Threading.Tasks;
 using JabaBox.Core.Domain.Entities;
 using JabaBox.Core.RepositoryAbstractions;
-using JabaBoxServer.DataAccess.DataBaseContexts;
+using JabaBox.UnitTests.DbContextsForTests;
 using Microsoft.EntityFrameworkCore;
 
 namespace JabaBox.UnitTests.RepositoriesForTests;
 
 public class InMemoryStorageFileRepository : IStorageFileRepository
 {
-    private readonly JabaBoxDbContext _context;
+    private readonly JabaBoxDbTestContext _context;
 
-    public InMemoryStorageFileRepository(JabaBoxDbContext context)
+    public InMemoryStorageFileRepository(JabaBoxDbTestContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }

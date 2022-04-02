@@ -22,6 +22,8 @@ public sealed class JabaBoxDbContext : DbContext
         {
             modelBuilder.Entity<StorageFile>().Property(d => d.State)
                 .HasConversion(new EnumToStringConverter<FileState>());
+            
+            modelBuilder.Entity<BaseDirectory>().HasKey(d => d.UserId);
 
             modelBuilder.Entity<BaseDirectory>().HasMany(d => d.Directories)
                 .WithOne(s => s.BaseDirectory);

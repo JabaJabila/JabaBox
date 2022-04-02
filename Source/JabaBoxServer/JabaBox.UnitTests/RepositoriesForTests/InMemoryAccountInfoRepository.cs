@@ -2,20 +2,18 @@
 using System.Threading.Tasks;
 using JabaBox.Core.Domain.Entities;
 using JabaBox.Core.RepositoryAbstractions;
-using JabaBoxServer.DataAccess.DataBaseContexts;
+using JabaBox.UnitTests.DbContextsForTests;
+using JabaBox.UnitTests.RepositoriesForTests;
 using Microsoft.EntityFrameworkCore;
 
 namespace JabaBox.UnitTests.RepositoriesForTests;
 
 public class InMemoryAccountInfoRepository : IAccountInfoRepository
 {
-    private readonly JabaBoxDbContext _context;
+    private readonly JabaBoxDbTestContext _context;
 
-    public InMemoryAccountInfoRepository(JabaBoxDbContext context)
+    public InMemoryAccountInfoRepository(JabaBoxDbTestContext context)
     {
-        // DbContextOptions<JabaBoxDbContext> options = new DbContextOptionsBuilder<JabaBoxDbContext>()
-        //     .UseInMemoryDatabase(databaseName: "Test")
-        //     .Options;
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
     
