@@ -1,27 +1,244 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-abstract class AbstractList
-abstract AbstractCollection
-interface List
-interface Collection
+package Backups
+{
+    package Backups.Entities
+    {
+        class BackupJob
+        {
+            - IStorageCreationAlgorithm _algorithm
+            - List<JobObject> _jobObjects
+            - IRepository _repository
+            + Guid Id { get; }
+            + IReadOnlyCollection<JobObject> JobObjects => _jobObjects;
+            + Backup Backup { get; }
+        --
+            + BackupJob(IRepository repository, IStorageCreationAlgorithm algorithm, IReadOnlyCollection<JobObject> jobObjects)
+            + void AddJobObject(JobObject jobObject)
+            + void DeleteJobObject(JobObject jobObject)
+            + void CreateRestorePoint(DateTime? creationTime)
+            + void DeleteRestorePoint(RestorePoint restorePoint)
+        }
+        
+        class Backup
+        {
+            - List<RestorePoint> _restorePoints
+            + IReadOnlyList<RestorePoint> RestorePoints
+            --
+            ~ Backup()
+            ~ void AddRestorePoint(RestorePoint restorePoint)
+            ~ bool DeleteRestorePoint(RestorePoint restorePoint)  
+        }
+        
+        class JobObject 
+        {
+            + string FullName { get; }
+            --
+            + JobObject(string fullName)
+            + bool Equals(JobObject other)
+            + bool Equals(object obj)
+            + int GetHashCode()
+        }
+        
+        class RestorePoint
+        {
+            - List<Storage> _storages
+            + IReadOnlyList<Storage> Storages => _storages;
+            + DateTime CreationTime { get; }
+            + Guid Id { get; }
+            --
+            + RestorePoint(IReadOnlyCollection<Storage> storages, DateTime? dateTime)
+            + RestorePoint(Storage storage, DateTime? dateTime)
+        }
+        
+        class Storage
+        {
+            + string FullName { get; }
+            --
+            + Storage(string fullName)
+        }
+    }
+    
+    package Backups.Algorithms
+    {   
+        interface IStorageCreationAlgorithm
+        {
+            --
+            IReadOnlyCollection<string> CreateStorages(IRepository repository, List<string> jobObjectPaths, Guid backupJobId)
+        }
+        
+        class SingleStorageAlgorithm
+        {
+            --
+            + SingleStorageAlgorithm()
+            + IReadOnlyCollection<string> CreateStorages(IRepository repository, List<string> jobObjectPaths, Guid backupJobId)
+        }
+        
+        class SplitStoragesAlgorithm
+        {
+            --
+            + SplitStoragesAlgorithm()
+            + IReadOnlyCollection<string> CreateStorages(IRepository repository, List<string> jobObjectPaths, Guid backupJobId)
+        }
+    }
+    
+    package Backups.Repository
+    {
+        interface IRepository
+        {
+            void CreateBackupJobRepository(Guid backupJobId)
+            bool CheckIfJobObjectExists(string fullName)
+            string CreateStorage(List<string> jobObjectsPaths, Guid backupJobId, Guid storageId)
+            string CreateStorage(string jobObjectPath, Guid backupJobId, Guid storageId)
+            void DeleteStorages(List<string> storagesNames)
+        }
+        
+        interface IRepositoryWithArchivator
+        {
+            void CreateBackupJobRepository(Guid backupJobId)
+            bool CheckIfJobObjectExists(string fullName)
+            string CreateStorage(List<string> jobObjectsPaths, Guid backupJobId, Guid storageId)
+            string CreateStorage(string jobObjectPath, Guid backupJobId, Guid storageId)
+            void DeleteStorages(List<string> storagesNames)
+            void SaveInArchive(string storagePath, string jobObjectPath)
+        }
+        
+        interface ICompressor
+        {
+            void Compress(Stream stream, string jobObjectPath)
+        }
+        
+        class LocalFilesRepository
+        {
+            + DirectoryInfo RepoDirectoryInfo { get; }
+            - string _storageFileExtension
+            - ICompressor _compressor
+            --
+            + LocalFilesRepository(string repositoryPath, ICompressor compressor, string storageFileExtension)
+            + void CreateBackupJobRepository(Guid backupJobId)
+            + bool CheckIfJobObjectExists(string fullName)
+            + string CreateStorage(List<string> jobObjectsPaths, Guid backupJobId, Guid storageId)
+            + string CreateStorage(string jobObjectPath, Guid backupJobId, Guid storageId)
+            + void DeleteStorages(List<string> storagesNames)
+            + void SaveInArchive(string storagePath, string jobObjectPath)
+        }
+        
+        class LocalMemoryRepository
+        {
+            - Dictionary<string, List<string>> _memoryRepository
+            --
+            + LocalMemoryRepository()
+            + void CreateBackupJobRepository(Guid backupJobId)
+            + bool CheckIfJobObjectExists(string fullName)
+            + string CreateStorage(List<string> jobObjectsPaths, Guid backupJobId, Guid storageId)
+            + string CreateStorage(string jobObjectPath, Guid backupJobId, Guid storageId)
+            + void DeleteStorages(List<string> storagesNames)
+            + List<string> ReadFromStorage(string storagePath)
+        }
+        
+        class ZipArchiveCompressor
+        {
+            - CompressionLevel _compressionLevel
+            --
+            + ZipArchiveCompressor(CompressionLevel compressionLevel)
+            + void Compress(Stream stream, string jobObjectPath)
+        }
+    }
 
-List <|-- AbstractList
-Collection <|-- AbstractCollection
-
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
-class ArrayList {
-Object[] elementData
-size()
+        
+    BackupJob "1" o-- "0..n" JobObject: contains
+    BackupJob "1" *-- "1" Backup: creates&contains
+    BackupJob "1" ..> "1" RestorePoint: creates
+    IStorageCreationAlgorithm "1" ..> "1" Storage: creates
+    BackupJob "1" o-- "1" IRepository: contains&uses
+    BackupJob "1" o-- "1" IStorageCreationAlgorithm: contains&uses
+    Backup "1" *-- "0..n" RestorePoint: comprises
+    RestorePoint "1" *-- "0..n" Storage: comprises
+    
+    IRepository "1" <.. "1" IStorageCreationAlgorithm: uses
+    IRepository <|-- IRepositoryWithArchivator: inherits 
+    IRepositoryWithArchivator <|.. LocalFilesRepository: implements
+    IRepository <|.. LocalMemoryRepository: implements
+    ICompressor <|.. ZipArchiveCompressor: implements
+    LocalFilesRepository "1" o-- "1" ICompressor: contains&uses
+    
+    IStorageCreationAlgorithm <|.. SingleStorageAlgorithm: implements
+    IStorageCreationAlgorithm <|.. SplitStoragesAlgorithm: implements 
 }
 
-enum TimeUnit {
-DAYS
-HOURS
-MINUTES
+package BackupsServer
+{
+    class Server 
+    {
+        + string DirectoryPath { get; }
+        + NetworkStream NetworkStream { get; private set; }
+        - TcpListener _listener;
+        - TcpClient _client;
+        --
+        + Server(string ipAddress, int port, string directoryPath)
+        + void Work()
+        - void ChooseAction()
+        - string GetLocation()
+        - void ReadAndSaveFile()
+        - int GetDataLength()
+        - void CreateJobDirectory()
+        - void DeleteFile()
+    }
+    
+    package BackupsServer.DataTypes
+    {
+        +enum ActionOption
+        {
+            ReadAndSaveFile
+            DeleteFile
+            CreateDirectory
+        }
+    }
+    
+    Server "1" ..> "1" ActionOption : uses
+}
+
+package BackupsClient
+{
+    package BackupsClient.Entities
+    {
+        class Client
+        {
+            + string Address { get; }
+            + int Port { get; }
+            + NetworkStream NetworkStream { get; private set; }
+            --
+            + Client(string address, int port)
+            + void Connect()
+            + void Dispose()
+        }
+        
+        class ClientToServerRepository
+        {
+            - string _storageFileExtension;
+            - ICompressor _compressor;
+            - Client _client;
+            --
+            + ClientToServerRepository(ICompressor compressor, string storageFileExtension, Client client)
+            + void CreateBackupJobRepository(Guid backupJobId)
+            + bool CheckIfJobObjectExists(string fullName)
+            + string CreateStorage(List<string> jobObjectsPaths, Guid backupJobId, Guid storageId)
+            + string CreateStorage(string jobObjectPath, Guid backupJobId, Guid storageId)
+            + void SaveInArchive(string storagePath, string jobObjectPath)
+            + void DeleteStorages(List<string> storagesNames)
+            - void SendFile(string path, string storageName, NetworkStream netStream)
+            - void CreateDirectory(string directoryName, NetworkStream netStream)
+            - void DeleteFile(string storageName, NetworkStream netStream)
+        }
+    }
+    
+    Client "1" x--> "1" Server : connects
+    IRepositoryWithArchivator <|.. ClientToServerRepository : implements
+    ClientToServerRepository "1" o-- "1" ICompressor : contains&uses
+    ClientToServerRepository "1" x--> "1" Server : sends_data
+    ClientToServerRepository "1" ..> ActionOption : uses
+    ClientToServerRepository "1" o-- "1" Client : contains&uses
 }
 
 @enduml
