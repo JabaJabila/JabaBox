@@ -3,12 +3,13 @@ using JabaBox.Core.Domain.Entities;
 using JabaBox.Core.Domain.Exceptions;
 using JabaBox.Core.Domain.ServicesAbstractions;
 using JabaBox.WebApi.Mappers.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JabaBox.WebApi.Controllers;
 
 [ApiController]
-[Route("{login}/storage")]
+[Route("me/storage")]
 public class DirectoryController
 {
     private readonly IAccountService _accountService;
@@ -16,24 +17,29 @@ public class DirectoryController
     private readonly IBaseDirectoryMapper _baseDirectoryMapper;
     private readonly IStorageDirectoryMapper _storageDirectoryMapper;
     private readonly ILogger<DirectoryController> _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public DirectoryController(
         IAccountService accountService,
         IStorageService storageService,
         IBaseDirectoryMapper baseDirectoryMapper, 
         IStorageDirectoryMapper storageDirectoryMapper, 
-        ILogger<DirectoryController> logger)
+        ILogger<DirectoryController> logger, 
+        IHttpContextAccessor httpContextAccessor)
     {
         _accountService = accountService ?? throw new ArgumentNullException(nameof(accountService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         _baseDirectoryMapper = baseDirectoryMapper ?? throw new ArgumentNullException(nameof(baseDirectoryMapper));
         _storageDirectoryMapper = storageDirectoryMapper ?? throw new ArgumentNullException(nameof(storageDirectoryMapper));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpGet("directories")]
-    public ActionResult GetDirectories(string login)
+    public ActionResult GetDirectories()
     {
+        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
         {
             if (string.IsNullOrWhiteSpace(login))
@@ -56,9 +62,11 @@ public class DirectoryController
         }
     }
     
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPost("directory-create")]
-    public ActionResult CreateDirectory(string login, string name)
+    public ActionResult CreateDirectory(string name)
     {
+        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
         {
             if (string.IsNullOrWhiteSpace(login))
@@ -84,9 +92,11 @@ public class DirectoryController
         }
     }
     
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPut("{name}/rename")]
-    public ActionResult RenameDirectory(string login, string name, string newName)
+    public ActionResult RenameDirectory(string name, string newName)
     {
+        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
         {
             if (string.IsNullOrWhiteSpace(login))
@@ -119,9 +129,11 @@ public class DirectoryController
         }
     }
     
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpDelete("{name}/delete")]
-    public ActionResult DeleteDirectory(string login, string name)
+    public ActionResult DeleteDirectory(string name)
     {
+        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
         {
             if (string.IsNullOrWhiteSpace(login))

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JabaBox.WebApi.Controllers;
 
 [ApiController]
-[Route("{login}/storage/{directoryName}")]
+[Route("me/storage")]
 public class FileController
 {
     private readonly IAccountService _accountService;
@@ -19,13 +19,15 @@ public class FileController
     private readonly IStorageFileMapper _storageFileMapper;
     private readonly ICompressor _compressor;
     private readonly ILogger<FileController> _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public FileController(
         IAccountService accountService,
         IStorageService storageService,
         IStorageDirectoryMapper storageDirectoryMapper, 
         IStorageFileMapper storageFileMapper, ICompressor compressor,
-        ILogger<FileController> logger)
+        ILogger<FileController> logger, 
+        IHttpContextAccessor httpContextAccessor)
     {
         _accountService = accountService ?? throw new ArgumentNullException(nameof(accountService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
@@ -34,11 +36,13 @@ public class FileController
         _storageFileMapper = storageFileMapper ?? throw new ArgumentNullException(nameof(storageFileMapper));
         _compressor = compressor ?? throw new ArgumentNullException(nameof(compressor));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
     }
 
-    [HttpGet]
-    public ActionResult GetFiles(string login, string directoryName)
+    [HttpGet("{directoryName}")]
+    public ActionResult GetFiles(string directoryName)
     {
+        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
         {
             if (string.IsNullOrWhiteSpace(login))
@@ -67,9 +71,10 @@ public class FileController
         }
     }
     
-    [HttpPost("upload")]
-    public ActionResult UploadFile(string login, string directoryName, IFormFile file, bool compress = false)
+    [HttpPost("{directoryName}/upload")]
+    public ActionResult UploadFile(string directoryName, IFormFile file, bool compress = false)
     {
+        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
         {
             ArgumentNullException.ThrowIfNull(file);
@@ -118,9 +123,10 @@ public class FileController
         }
     }
     
-    [HttpPut("{fileName}/rename")]
-    public ActionResult RenameFile(string login, string directoryName, string fileName, string newName)
+    [HttpPut("{directoryName}/{fileName}/rename")]
+    public ActionResult RenameFile(string directoryName, string fileName, string newName)
     {
+        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
         {
             if (string.IsNullOrWhiteSpace(login))
@@ -160,9 +166,10 @@ public class FileController
         }
     }
     
-    [HttpDelete("{fileName}/delete")]
-    public ActionResult DeleteFile(string login, string directoryName, string fileName)
+    [HttpDelete("{directoryName}/{fileName}/delete")]
+    public ActionResult DeleteFile(string directoryName, string fileName)
     {
+        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
         {
             if (string.IsNullOrWhiteSpace(login))
@@ -199,9 +206,10 @@ public class FileController
         }
     }
     
-    [HttpGet("{fileName}/download")]
-    public ActionResult DownloadFile(string login, string directoryName, string fileName)
+    [HttpGet("{directoryName}/{fileName}/download")]
+    public ActionResult DownloadFile(string directoryName, string fileName)
     {
+        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
         {
             if (string.IsNullOrWhiteSpace(login))
