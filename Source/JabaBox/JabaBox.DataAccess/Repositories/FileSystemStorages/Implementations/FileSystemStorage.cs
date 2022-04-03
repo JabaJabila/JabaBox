@@ -1,7 +1,7 @@
 ﻿using JabaBox.Core.Domain.Exceptions;
-using JabaBoxServer.DataAccess.Repositories.FileSystemStorages.Abstractions;
+using JabaBox.DataAccess.Repositories.FileSystemStorages.Abstractions;
 
-namespace JabaBoxServer.DataAccess.Repositories.FileSystemStorages.Implementations;
+namespace JabaBox.DataAccess.Repositories.FileSystemStorages.Implementations;
 
 public class FileSystemStorage : IFileSystemStorage
 {

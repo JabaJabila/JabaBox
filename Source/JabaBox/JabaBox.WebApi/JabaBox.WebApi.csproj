@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\JabaBoxServer.DataAccess\JabaBoxServer.DataAccess.csproj" />
+      <ProjectReference Include="..\JabaBox.DataAccess\JabaBox.DataAccess.csproj" />
     </ItemGroup>
 
     <ItemGroup>

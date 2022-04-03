@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JabaBoxServer.DataAccess", "JabaBoxServer.DataAccess\JabaBoxServer.DataAccess.csproj", "{C1FC397F-5D2C-4080-9CF8-176C2365ED5A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JabaBox.DataAccess", "JabaBox.DataAccess\JabaBox.DataAccess.csproj", "{C1FC397F-5D2C-4080-9CF8-176C2365ED5A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JabaBox.Core", "JabaBox.Core\JabaBox.Core.csproj", "{93B20E14-84E3-44A4-9693-DDB23C3795C8}"
 EndProject

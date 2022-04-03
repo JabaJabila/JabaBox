@@ -1,4 +1,4 @@
-﻿namespace JabaBoxServer.DataAccess.Repositories.FileSystemStorages.Abstractions;
+﻿namespace JabaBox.DataAccess.Repositories.FileSystemStorages.Abstractions;
 
 public interface IFileSystemBaseDirectoryStorage
 {

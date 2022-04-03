@@ -1,8 +1,8 @@
 ﻿using JabaBox.Core.Domain.Entities;
 using JabaBox.Core.RepositoryAbstractions;
-using JabaBoxServer.DataAccess.DataBaseContexts;
+using JabaBox.DataAccess.DataBaseContexts;
 
-namespace JabaBoxServer.DataAccess.Repositories;
+namespace JabaBox.DataAccess.Repositories;
 
 public class AccountInfoRepository : IAccountInfoRepository
 {

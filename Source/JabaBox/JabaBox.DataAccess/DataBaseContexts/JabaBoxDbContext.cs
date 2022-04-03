@@ -3,7 +3,7 @@ using JabaBox.Core.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace JabaBoxServer.DataAccess.DataBaseContexts;
+namespace JabaBox.DataAccess.DataBaseContexts;
 
 public sealed class JabaBoxDbContext : DbContext
 {

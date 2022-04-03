@@ -1,10 +1,10 @@
 ﻿using JabaBox.Core.Domain.Entities;
 using JabaBox.Core.Domain.Exceptions;
 using JabaBox.Core.RepositoryAbstractions;
-using JabaBoxServer.DataAccess.DataBaseContexts;
-using JabaBoxServer.DataAccess.Repositories.FileSystemStorages.Abstractions;
+using JabaBox.DataAccess.DataBaseContexts;
+using JabaBox.DataAccess.Repositories.FileSystemStorages.Abstractions;
 
-namespace JabaBoxServer.DataAccess.Repositories;
+namespace JabaBox.DataAccess.Repositories;
 
 public class BaseDirectoryRepository : IBaseDirectoryRepository
 {
