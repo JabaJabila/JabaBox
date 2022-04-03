@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JabaBox.WebApi.Controllers;
 
 [ApiController]
-[Route("/storage")]
+[Route("{login}/storage")]
 public class DirectoryController
 {
     private readonly IAccountService _accountService;
@@ -28,7 +28,7 @@ public class DirectoryController
         _storageDirectoryMapper = storageDirectoryMapper ?? throw new ArgumentNullException(nameof(storageDirectoryMapper));
     }
 
-    [HttpGet("directory")]
+    [HttpGet("directories")]
     public ActionResult GetDirectories(string login)
     {
         try
@@ -40,11 +40,11 @@ public class DirectoryController
             BaseDirectory baseDirectory = _storageService.GetBaseDirectory(accountInfo);
             return new OkObjectResult(_baseDirectoryMapper.EntityToDto(baseDirectory));
         }
-        catch (DirectoryException ae)
+        catch (JabaBoxException e)
         {
-            return new NotFoundObjectResult(ae.Message);
+            return new NotFoundObjectResult(e.Message);
         } 
-        catch (Exception e)
+        catch (Exception)
         {
             return new StatusCodeResult((int) HttpStatusCode.BadRequest);
         }
@@ -65,9 +65,9 @@ public class DirectoryController
             StorageDirectory directory = _storageService.CreateDirectory(accountInfo, name);
             return new OkObjectResult(_storageDirectoryMapper.EntityToDto(directory));
         }
-        catch (DirectoryException ae)
+        catch (JabaBoxException e)
         {
-            return new NotFoundObjectResult(ae.Message);
+            return new NotFoundObjectResult(e.Message);
         } 
         catch (Exception)
         {
@@ -75,7 +75,7 @@ public class DirectoryController
         }
     }
     
-    [HttpPut("{name}-rename")]
+    [HttpPut("{name}/rename")]
     public ActionResult RenameDirectory(string login, string name, string newName)
     {
         try
@@ -97,9 +97,9 @@ public class DirectoryController
             directory = _storageService.RenameDirectory(accountInfo, directory, newName);
             return new OkObjectResult(_storageDirectoryMapper.EntityToDto(directory));
         }
-        catch (DirectoryException ae)
+        catch (JabaBoxException e)
         {
-            return new NotFoundObjectResult(ae.Message);
+            return new NotFoundObjectResult(e.Message);
         } 
         catch (Exception)
         {
@@ -107,7 +107,7 @@ public class DirectoryController
         }
     }
     
-    [HttpDelete("{name}-delete")]
+    [HttpDelete("{name}/delete")]
     public ActionResult DeleteDirectory(string login, string name)
     {
         try
@@ -126,9 +126,9 @@ public class DirectoryController
             _storageService.DeleteDirectory(accountInfo, directory);
             return new OkResult();
         }
-        catch (DirectoryException ae)
+        catch (JabaBoxException e)
         {
-            return new NotFoundObjectResult(ae.Message);
+            return new NotFoundObjectResult(e.Message);
         } 
         catch (Exception)
         {

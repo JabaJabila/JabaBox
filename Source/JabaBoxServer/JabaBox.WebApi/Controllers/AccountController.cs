@@ -31,9 +31,9 @@ public class AccountController
             AccountInfo accountInfo = _accountService.GetAccount(login);
             return new OkObjectResult(_accountMapper.EntityToDto(accountInfo));
         }
-        catch (AccountInfoException ae)
+        catch (JabaBoxException e)
         {
-            return new NotFoundObjectResult(ae.Message);
+            return new NotFoundObjectResult(e.Message);
         } 
         catch (Exception)
         {
@@ -58,9 +58,9 @@ public class AccountController
             var account = _accountService.RegisterAccount(login, password, gigabytePlan);
             return new OkObjectResult(_accountMapper.EntityToDto(account));
         }
-        catch (AccountInfoException ae)
+        catch (JabaBoxException e)
         {
-            return new NotFoundObjectResult(ae.Message);
+            return new NotFoundObjectResult(e.Message);
         } 
         catch (Exception)
         {
@@ -68,7 +68,7 @@ public class AccountController
         }
     }
     
-    [HttpPut("change-password")]
+    [HttpPut("{login}/change-password")]
     public ActionResult ChangePassword(string login, string password, string newPassword)
     {
         try
@@ -85,9 +85,9 @@ public class AccountController
             var account = _accountService.ChangePassword(login, password, newPassword);
             return new OkObjectResult(_accountMapper.EntityToDto(account));
         }
-        catch (AccountInfoException ae)
+        catch (JabaBoxException e)
         {
-            return new NotFoundObjectResult(ae.Message);
+            return new NotFoundObjectResult(e.Message);
         } 
         catch (Exception)
         {
@@ -95,7 +95,7 @@ public class AccountController
         }
     }
     
-    [HttpPut("change-plan")]
+    [HttpPut("{login}/change-plan")]
     public ActionResult ChangeGigabytePlan(string login, int newGigabytes)
     {
         try
@@ -109,9 +109,9 @@ public class AccountController
             var account = _accountService.ChangeGigabytesPlan(login, newGigabytes);
             return new OkObjectResult(_accountMapper.EntityToDto(account));
         }
-        catch (AccountInfoException ae)
+        catch (JabaBoxException e)
         {
-            return new NotFoundObjectResult(ae.Message);
+            return new NotFoundObjectResult(e.Message);
         } 
         catch (Exception)
         {

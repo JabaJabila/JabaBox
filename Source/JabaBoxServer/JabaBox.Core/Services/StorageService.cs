@@ -88,8 +88,11 @@ public class StorageService : IStorageService
             throw new DirectoryException($"Directory with name \'{directory.Name}\' doesn't exist");
         
         CheckIfDirectoryExists(account, directory);
-
         baseDirectory.Directories.ToList().Remove(directory);
+
+        foreach (var file in directory.Files)
+            baseDirectory.BytesOccupied -= file.ByteSize;
+        
         _baseDirectoryRepository.UpdateBaseDirectory(baseDirectory);
         _storageDirectoryRepository.DeleteDirectory(directory);
     }
@@ -147,6 +150,9 @@ public class StorageService : IStorageService
         CheckIfFileExists(account, directory, file);
 
         directory.Files.ToList().Remove(file);
+        var baseDir = _baseDirectoryRepository.GetBaseDirectoryById(account.Id);
+        baseDir.BytesOccupied -= file.ByteSize;
+        _baseDirectoryRepository.UpdateBaseDirectory(baseDir);
         _storageDirectoryRepository.UpdateStorageDirectory(directory);
         _storageFileRepository.DeleteFile(file);
     }

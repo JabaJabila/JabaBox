@@ -52,22 +52,24 @@ public class FileSystemStorage : IFileSystemStorage
     public void CreateStorageFile(Guid baseDirectoryUserId, Guid directoryId, Guid storageFileId, byte[] data)
     {
         CheckStorageDirectory(baseDirectoryUserId, directoryId);
-        string pathToFile =
-            Path.Combine(Path.Combine(_storageDir, baseDirectoryUserId.ToString(), directoryId.ToString()));
+        string pathToFile = Path.Combine(
+            Path.Combine(_storageDir, baseDirectoryUserId.ToString(), directoryId.ToString(), storageFileId.ToString()));
 
         File.WriteAllBytes(pathToFile, data);
     }
 
     public void CheckStorageFile(Guid baseDirectoryUserId, Guid directoryId, Guid fileId)
     {
-        if (!File.Exists(Path.Combine(_storageDir, baseDirectoryUserId.ToString(), directoryId.ToString())))
+        if (!File.Exists(Path.Combine(
+                _storageDir, baseDirectoryUserId.ToString(), directoryId.ToString(), fileId.ToString())))
             throw new FileException($"File with id {fileId} doesn't exist in directory with id {directoryId}" +
                                     $" for user with id {baseDirectoryUserId}");
     }
 
     public void DeleteStorageFile(Guid baseDirectoryUserId, Guid directoryId, Guid fileId)
     {
-        var file = new FileInfo(Path.Combine(_storageDir, baseDirectoryUserId.ToString(), directoryId.ToString()));
+        var file = new FileInfo(Path.Combine(
+            _storageDir, baseDirectoryUserId.ToString(), directoryId.ToString(), fileId.ToString()));
         file.Delete();
     }
 }
