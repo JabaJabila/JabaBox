@@ -3,6 +3,8 @@ using JabaBox.Core.RepositoryAbstractions;
 using JabaBox.Core.Services;
 using JabaBox.WebApi.Mappers.Abstractions;
 using JabaBox.WebApi.Mappers.Implementations;
+using JabaBox.WebApi.Tools.Compressors.Abstractions;
+using JabaBox.WebApi.Tools.Compressors.Implementations;
 using JabaBoxServer.DataAccess.DataBaseContexts;
 using JabaBoxServer.DataAccess.Repositories;
 using JabaBoxServer.DataAccess.Repositories.FileSystemStorages.Abstractions;
@@ -30,6 +32,7 @@ builder.Services.AddScoped<IAccountInfoRepository, AccountInfoRepository>();
 builder.Services.AddScoped<IBaseDirectoryRepository, BaseDirectoryRepository>();
 builder.Services.AddScoped<IStorageDirectoryRepository, StorageDirectoryRepository>();
 builder.Services.AddScoped<IStorageFileRepository, StorageFileRepository>();
+builder.Services.AddScoped<ICompressor, OptimalCompressor>();
 
 var storage = new FileSystemStorage(builder.Configuration.GetValue<string>("FileStoragePath"));
 builder.Services.AddScoped<IFileSystemStorage>(_ => storage);

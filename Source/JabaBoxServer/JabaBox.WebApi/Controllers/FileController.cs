@@ -4,6 +4,7 @@ using JabaBox.Core.Domain.Enums;
 using JabaBox.Core.Domain.Exceptions;
 using JabaBox.Core.Domain.ServicesAbstractions;
 using JabaBox.WebApi.Mappers.Abstractions;
+using JabaBox.WebApi.Tools.Compressors.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JabaBox.WebApi.Controllers;
@@ -16,18 +17,20 @@ public class FileController
     private readonly IStorageService _storageService;
     private readonly IStorageDirectoryMapper _storageDirectoryMapper;
     private readonly IStorageFileMapper _storageFileMapper;
+    private readonly ICompressor _compressor;
 
     public FileController(
         IAccountService accountService,
         IStorageService storageService,
         IStorageDirectoryMapper storageDirectoryMapper, 
-        IStorageFileMapper storageFileMapper)
+        IStorageFileMapper storageFileMapper, ICompressor compressor)
     {
         _accountService = accountService ?? throw new ArgumentNullException(nameof(accountService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         _storageDirectoryMapper =
             storageDirectoryMapper ?? throw new ArgumentNullException(nameof(storageDirectoryMapper));
         _storageFileMapper = storageFileMapper ?? throw new ArgumentNullException(nameof(storageFileMapper));
+        _compressor = compressor ?? throw new ArgumentNullException(nameof(compressor));
     }
 
     [HttpGet]
@@ -86,7 +89,7 @@ public class FileController
             var state = FileState.Normal;
             if (compress)
             {
-                // TODO
+                fileBytes = _compressor.Compress(fileBytes);
                 state = FileState.Compressed;
             }
 
@@ -207,7 +210,7 @@ public class FileController
 
             if (storageFile.State == FileState.Compressed)
             {
-                // TODO
+                data = _compressor.Decompress(data);
             }
 
             var result = new FileStreamResult(new MemoryStream(data), "application/octet-stream")
