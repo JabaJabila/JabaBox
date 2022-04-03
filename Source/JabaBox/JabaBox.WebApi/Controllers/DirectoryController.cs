@@ -40,12 +40,9 @@ public class DirectoryController
     [HttpGet("directories")]
     public ActionResult GetDirectories()
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-
             AccountInfo accountInfo = _accountService.GetAccount(login);
             BaseDirectory baseDirectory = _storageService.GetBaseDirectory(accountInfo);
             _logger.LogInformation("Directory found");
@@ -67,12 +64,9 @@ public class DirectoryController
     [HttpPost("directory-create")]
     public ActionResult CreateDirectory([Required] string name)
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-            
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
 
@@ -97,12 +91,9 @@ public class DirectoryController
     [HttpPut("{name}/rename")]
     public ActionResult RenameDirectory([Required] string name, [Required] string newName)
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-            
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
             
@@ -134,12 +125,9 @@ public class DirectoryController
     [HttpDelete("{name}/delete")]
     public ActionResult DeleteDirectory([Required] string name)
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-            
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
 

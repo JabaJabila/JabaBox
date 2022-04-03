@@ -156,7 +156,7 @@ public class StorageServiceTests
     {
         var account = _accountService.RegisterAccount(login, password, gigabytes);
         var dir = _storageService.CreateDirectory(account, dirName);
-        var file = _storageService.AddFile(account, dir, FileState.Normal, fileName, data);
+        _storageService.AddFile(account, dir, FileState.Normal, fileName, data);
         Assert.Throws<FileException>(() =>
         {
             _storageService.AddFile(account, dir, FileState.Normal, fileName, data);

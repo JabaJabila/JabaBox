@@ -179,7 +179,7 @@ public class StorageService : IStorageService
 
     private static long TranslateGigabytesToBytes(int gigabytes)
     {
-        return gigabytes * 1024l * 1024l * 1024l;
+        return gigabytes * 1024L * 1024L * 1024L;
     }
     
     private void CheckIfDirectoryExists(AccountInfo account, StorageDirectory directory)
