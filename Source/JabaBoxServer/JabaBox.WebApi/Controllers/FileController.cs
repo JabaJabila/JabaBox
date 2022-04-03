@@ -1,10 +1,12 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 using JabaBox.Core.Domain.Entities;
 using JabaBox.Core.Domain.Enums;
 using JabaBox.Core.Domain.Exceptions;
 using JabaBox.Core.Domain.ServicesAbstractions;
 using JabaBox.WebApi.Mappers.Abstractions;
 using JabaBox.WebApi.Tools.Compressors.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JabaBox.WebApi.Controllers;
@@ -39,8 +41,9 @@ public class FileController
         _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpGet("{directoryName}")]
-    public ActionResult GetFiles(string directoryName)
+    public ActionResult GetFiles([Required] string directoryName)
     {
         string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
@@ -71,8 +74,9 @@ public class FileController
         }
     }
     
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPost("{directoryName}/upload")]
-    public ActionResult UploadFile(string directoryName, IFormFile file, bool compress = false)
+    public ActionResult UploadFile([Required] string directoryName, [Required] IFormFile file, bool compress = false)
     {
         string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
@@ -123,8 +127,9 @@ public class FileController
         }
     }
     
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPut("{directoryName}/{fileName}/rename")]
-    public ActionResult RenameFile(string directoryName, string fileName, string newName)
+    public ActionResult RenameFile([Required] string directoryName, [Required] string fileName, [Required] string newName)
     {
         string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
@@ -166,8 +171,9 @@ public class FileController
         }
     }
     
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpDelete("{directoryName}/{fileName}/delete")]
-    public ActionResult DeleteFile(string directoryName, string fileName)
+    public ActionResult DeleteFile([Required] string directoryName, [Required] string fileName)
     {
         string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
@@ -206,8 +212,9 @@ public class FileController
         }
     }
     
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpGet("{directoryName}/{fileName}/download")]
-    public ActionResult DownloadFile(string directoryName, string fileName)
+    public ActionResult DownloadFile([Required] string directoryName, [Required] string fileName)
     {
         string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try

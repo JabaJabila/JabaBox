@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 using JabaBox.Core.Domain.Entities;
 using JabaBox.Core.Domain.Exceptions;
 using JabaBox.Core.Domain.ServicesAbstractions;
@@ -64,7 +65,7 @@ public class DirectoryController
     
     [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPost("directory-create")]
-    public ActionResult CreateDirectory(string name)
+    public ActionResult CreateDirectory([Required] string name)
     {
         string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
@@ -94,7 +95,7 @@ public class DirectoryController
     
     [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPut("{name}/rename")]
-    public ActionResult RenameDirectory(string name, string newName)
+    public ActionResult RenameDirectory([Required] string name, [Required] string newName)
     {
         string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
@@ -131,7 +132,7 @@ public class DirectoryController
     
     [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpDelete("{name}/delete")]
-    public ActionResult DeleteDirectory(string name)
+    public ActionResult DeleteDirectory([Required] string name)
     {
         string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try

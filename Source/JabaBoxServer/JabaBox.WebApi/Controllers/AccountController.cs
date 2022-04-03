@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using JabaBox.Core.Domain.Entities;
@@ -34,7 +35,7 @@ public class AccountController
     }
     
     [HttpPost("/get-login-token")]
-    public IActionResult GetToken(string login, string password)
+    public IActionResult GetToken([Required] string login, [Required] string password)
     {
         try
         {
@@ -99,7 +100,7 @@ public class AccountController
     }
     
     [HttpPost("register-account")]
-    public ActionResult RegisterAccount(string login, string password, int gigabytePlan)
+    public ActionResult RegisterAccount([Required] string login, [Required]  string password, [Required]  int gigabytePlan)
     {
         try
         {
@@ -130,7 +131,7 @@ public class AccountController
     
     [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPut("me/change-password")]
-    public ActionResult ChangePassword(string password, string newPassword)
+    public ActionResult ChangePassword([Required] string password, [Required] string newPassword)
     {
         string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
@@ -162,7 +163,7 @@ public class AccountController
     
     [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPut("me/change-plan")]
-    public ActionResult ChangeGigabytePlan(int newGigabytes)
+    public ActionResult ChangeGigabytePlan([Required] int newGigabytes)
     {
         string login = _httpContextAccessor.HttpContext.User.Identity.Name;
         try
