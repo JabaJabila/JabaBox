@@ -72,4 +72,10 @@ public class FileSystemStorage : IFileSystemStorage
             _storageDir, baseDirectoryUserId.ToString(), directoryId.ToString(), fileId.ToString()));
         file.Delete();
     }
+
+    public byte[] GetFileData(Guid accountId, Guid directoryId, Guid fileId)
+    {
+        return File.ReadAllBytes(
+            Path.Combine(_storageDir, accountId.ToString(), directoryId.ToString(), fileId.ToString()));
+    }
 }

@@ -86,6 +86,7 @@ public class FileController
             var state = FileState.Normal;
             if (compress)
             {
+                // TODO
                 state = FileState.Compressed;
             }
 
@@ -168,6 +169,53 @@ public class FileController
             
             _storageService.DeleteFile(accountInfo, storageDirectory, storageFile);
             return new OkResult();
+        }
+        catch (JabaBoxException e)
+        {
+            return new NotFoundObjectResult(e.Message);
+        }
+        catch (Exception)
+        {
+            return new StatusCodeResult((int) HttpStatusCode.BadRequest);
+        }
+    }
+    
+    [HttpGet("{fileName}/download")]
+    public ActionResult DownloadFile(string login, string directoryName, string fileName)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(login))
+                throw new ArgumentNullException(nameof(login));
+
+            if (string.IsNullOrWhiteSpace(directoryName))
+                throw new ArgumentNullException(nameof(directoryName));
+
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentNullException(nameof(fileName));
+
+            AccountInfo accountInfo = _accountService.GetAccount(login);
+            StorageDirectory? storageDirectory = _storageService.FindDirectory(accountInfo, directoryName);
+            if (storageDirectory is null)
+                throw new DirectoryException($"Directory \'{directoryName}\' not found");
+
+            var storageFile = _storageService.FindFile(accountInfo, storageDirectory, fileName);
+            if (storageFile is null)
+                throw new FileException($"File \'{fileName}\' not found");
+
+            byte[] data = _storageService.GetFileData(accountInfo, storageDirectory, storageFile);
+
+            if (storageFile.State == FileState.Compressed)
+            {
+                // TODO
+            }
+
+            var result = new FileStreamResult(new MemoryStream(data), "application/octet-stream")
+            {
+                FileDownloadName = fileName,
+            };
+            
+            return result;
         }
         catch (JabaBoxException e)
         {

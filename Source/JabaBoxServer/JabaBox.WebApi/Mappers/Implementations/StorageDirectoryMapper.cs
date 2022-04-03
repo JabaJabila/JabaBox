@@ -6,10 +6,17 @@ namespace JabaBox.WebApi.Mappers.Implementations;
 
 public class StorageDirectoryMapper : IStorageDirectoryMapper
 {
+    private readonly IStorageFileMapper _storageFileMapper;
+    
+    public StorageDirectoryMapper(IStorageFileMapper storageFileMapper)
+    {
+        _storageFileMapper = storageFileMapper ?? throw new ArgumentNullException(nameof(storageFileMapper));
+    }
+
     public StorageDirectoryDto EntityToDto(StorageDirectory directory)
     {
         ArgumentNullException.ThrowIfNull(directory);
-        var fileNames = directory.Files.Select(f => f.Name).ToList();
+        var fileNames = directory.Files.Select(f => _storageFileMapper.EntityToDto(f)).ToList();
         return new StorageDirectoryDto
         {
             Id = directory.Id,

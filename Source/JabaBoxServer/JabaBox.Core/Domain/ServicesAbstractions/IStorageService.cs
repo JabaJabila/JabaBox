@@ -17,4 +17,5 @@ public interface IStorageService
     StorageFile RenameFile(AccountInfo account, StorageDirectory directory, StorageFile file,  string newName);
     void DeleteFile(AccountInfo account, StorageDirectory directory, StorageFile file);
     long BytesAvailable(AccountInfo account);
+    byte[] GetFileData(AccountInfo account, StorageDirectory storage, StorageFile file);
 }

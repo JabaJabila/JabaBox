@@ -62,4 +62,9 @@ public class InMemoryStorageFileRepository : IStorageFileRepository
         _context.StorageFiles.Remove(file);
         _context.SaveChanges();
     }
+
+    public byte[] GetFileData(AccountInfo account, StorageDirectory directory, StorageFile file)
+    {
+        return Array.Empty<byte>();
+    }
 }

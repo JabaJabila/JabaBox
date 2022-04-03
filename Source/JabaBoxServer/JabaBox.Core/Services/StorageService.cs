@@ -165,6 +165,18 @@ public class StorageService : IStorageService
         return TranslateGigabytesToBytes(account.GigabytesAvailable) - baseDir.BytesOccupied;
     }
 
+    public byte[] GetFileData(AccountInfo account, StorageDirectory directory, StorageFile file)
+    {
+        ArgumentNullException.ThrowIfNull(account);
+        ArgumentNullException.ThrowIfNull(directory);
+        ArgumentNullException.ThrowIfNull(file);
+
+        CheckIfDirectoryExists(account, directory);
+        CheckIfFileExists(account, directory, file);
+
+        return _storageFileRepository.GetFileData(account, directory, file);
+    }
+
     private static long TranslateGigabytesToBytes(int gigabytes)
     {
         return gigabytes * 1024l * 1024l * 1024l;

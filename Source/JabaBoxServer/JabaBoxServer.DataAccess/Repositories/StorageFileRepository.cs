@@ -64,4 +64,13 @@ public class StorageFileRepository : IStorageFileRepository
         _storage.DeleteStorageFile(file.Directory.BaseDirectory.UserId, file.Directory.Id, file.Id);
         _context.SaveChanges();
     }
+
+    public byte[] GetFileData(AccountInfo account, StorageDirectory directory, StorageFile file)
+    {
+        ArgumentNullException.ThrowIfNull(account);
+        ArgumentNullException.ThrowIfNull(directory);
+        ArgumentNullException.ThrowIfNull(file);
+
+        return _storage.GetFileData(account.Id, directory.Id, file.Id);
+    }
 }
