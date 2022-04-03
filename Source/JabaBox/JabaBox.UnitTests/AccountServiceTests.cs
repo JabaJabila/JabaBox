@@ -60,6 +60,7 @@ public class AccountServiceTests
         var account = _accountService.RegisterAccount(login, password, gigabytes);
         _accountService.ChangePassword(login, password, newPassword);
         var foundAcc = _accountService.GetAccount(login);
+        
         Assert.True(foundAcc.Login == login && foundAcc.Password == newPassword && foundAcc.GigabytesAvailable == gigabytes);
     }
     
