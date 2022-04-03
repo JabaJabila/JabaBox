@@ -15,17 +15,20 @@ public class DirectoryController
     private readonly IStorageService _storageService;
     private readonly IBaseDirectoryMapper _baseDirectoryMapper;
     private readonly IStorageDirectoryMapper _storageDirectoryMapper;
+    private readonly ILogger<DirectoryController> _logger;
 
     public DirectoryController(
         IAccountService accountService,
         IStorageService storageService,
         IBaseDirectoryMapper baseDirectoryMapper, 
-        IStorageDirectoryMapper storageDirectoryMapper)
+        IStorageDirectoryMapper storageDirectoryMapper, 
+        ILogger<DirectoryController> logger)
     {
         _accountService = accountService ?? throw new ArgumentNullException(nameof(accountService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         _baseDirectoryMapper = baseDirectoryMapper ?? throw new ArgumentNullException(nameof(baseDirectoryMapper));
         _storageDirectoryMapper = storageDirectoryMapper ?? throw new ArgumentNullException(nameof(storageDirectoryMapper));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     [HttpGet("directories")]
@@ -38,14 +41,17 @@ public class DirectoryController
 
             AccountInfo accountInfo = _accountService.GetAccount(login);
             BaseDirectory baseDirectory = _storageService.GetBaseDirectory(accountInfo);
+            _logger.LogInformation("Directory found");
             return new OkObjectResult(_baseDirectoryMapper.EntityToDto(baseDirectory));
         }
         catch (JabaBoxException e)
         {
+            _logger.LogInformation(e, "");
             return new NotFoundObjectResult(e.Message);
         } 
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogInformation(e, "");
             return new StatusCodeResult((int) HttpStatusCode.BadRequest);
         }
     }
@@ -63,14 +69,17 @@ public class DirectoryController
 
             AccountInfo accountInfo = _accountService.GetAccount(login);
             StorageDirectory directory = _storageService.CreateDirectory(accountInfo, name);
+            _logger.LogInformation("Directory was created");
             return new OkObjectResult(_storageDirectoryMapper.EntityToDto(directory));
         }
         catch (JabaBoxException e)
         {
+            _logger.LogInformation(e, "");
             return new NotFoundObjectResult(e.Message);
         } 
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "");
             return new StatusCodeResult((int) HttpStatusCode.BadRequest);
         }
     }
@@ -95,14 +104,17 @@ public class DirectoryController
                 throw new DirectoryException($"Directory \'{name}\' not found");
                 
             directory = _storageService.RenameDirectory(accountInfo, directory, newName);
+            _logger.LogInformation("Directory was renamed");
             return new OkObjectResult(_storageDirectoryMapper.EntityToDto(directory));
         }
         catch (JabaBoxException e)
         {
+            _logger.LogInformation(e, "");
             return new NotFoundObjectResult(e.Message);
         } 
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "");
             return new StatusCodeResult((int) HttpStatusCode.BadRequest);
         }
     }
@@ -124,14 +136,17 @@ public class DirectoryController
                 throw new DirectoryException($"Directory \'{name}\' not found");
 
             _storageService.DeleteDirectory(accountInfo, directory);
+            _logger.LogInformation("Directory was deleted");
             return new OkResult();
         }
         catch (JabaBoxException e)
         {
+            _logger.LogInformation(e, "");
             return new NotFoundObjectResult(e.Message);
         } 
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "");
             return new StatusCodeResult((int) HttpStatusCode.BadRequest);
         }
     }

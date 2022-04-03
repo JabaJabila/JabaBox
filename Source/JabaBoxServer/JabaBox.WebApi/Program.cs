@@ -10,48 +10,71 @@ using JabaBoxServer.DataAccess.Repositories;
 using JabaBoxServer.DataAccess.Repositories.FileSystemStorages.Abstractions;
 using JabaBoxServer.DataAccess.Repositories.FileSystemStorages.Implementations;
 using Microsoft.EntityFrameworkCore;
+using NLog;
+using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<JabaBoxDbContext>(opt =>
+var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
+logger.Debug("debug");
+
+try
 {
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("MyServer"));
-});
+    builder.Services.AddControllers();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IStorageService, StorageService>();
-builder.Services.AddScoped<IAccountInfoMapper, AccountInfoMapper>();
-builder.Services.AddScoped<IBaseDirectoryMapper, BaseDirectoryMapper>();
-builder.Services.AddScoped<IStorageDirectoryMapper, StorageDirectoryMapper>();
-builder.Services.AddScoped<IStorageFileMapper, StorageFileMapper>();
-builder.Services.AddScoped<IAccountInfoRepository, AccountInfoRepository>();
-builder.Services.AddScoped<IBaseDirectoryRepository, BaseDirectoryRepository>();
-builder.Services.AddScoped<IStorageDirectoryRepository, StorageDirectoryRepository>();
-builder.Services.AddScoped<IStorageFileRepository, StorageFileRepository>();
-builder.Services.AddScoped<ICompressor, OptimalCompressor>();
+    builder.Logging.ClearProviders();
+    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+    builder.Host.UseNLog();
 
-var storage = new FileSystemStorage(builder.Configuration.GetValue<string>("FileStoragePath"));
-builder.Services.AddScoped<IFileSystemStorage>(_ => storage);
-builder.Services.AddScoped<IFileSystemStorageFileStorage>(_ => storage);
-builder.Services.AddScoped<IFileSystemBaseDirectoryStorage>(_ => storage);
-builder.Services.AddScoped<IFileSystemStorageDirectoryStorage>(_ => storage);
+    builder.Services.AddDbContext<JabaBoxDbContext>(opt =>
+    {
+        opt.UseSqlServer(builder.Configuration.GetConnectionString("MyServer"));
+    });
 
-var app = builder.Build();
+    builder.Services.AddScoped<IAccountService, AccountService>();
+    builder.Services.AddScoped<IStorageService, StorageService>();
+    builder.Services.AddScoped<IAccountInfoMapper, AccountInfoMapper>();
+    builder.Services.AddScoped<IBaseDirectoryMapper, BaseDirectoryMapper>();
+    builder.Services.AddScoped<IStorageDirectoryMapper, StorageDirectoryMapper>();
+    builder.Services.AddScoped<IStorageFileMapper, StorageFileMapper>();
+    builder.Services.AddScoped<IAccountInfoRepository, AccountInfoRepository>();
+    builder.Services.AddScoped<IBaseDirectoryRepository, BaseDirectoryRepository>();
+    builder.Services.AddScoped<IStorageDirectoryRepository, StorageDirectoryRepository>();
+    builder.Services.AddScoped<IStorageFileRepository, StorageFileRepository>();
+    builder.Services.AddScoped<ICompressor, OptimalCompressor>();
 
-if (app.Environment.IsDevelopment())
+    var storage = new FileSystemStorage(builder.Configuration.GetValue<string>("FileStoragePath"));
+    builder.Services.AddScoped<IFileSystemStorage>(_ => storage);
+    builder.Services.AddScoped<IFileSystemStorageFileStorage>(_ => storage);
+    builder.Services.AddScoped<IFileSystemBaseDirectoryStorage>(_ => storage);
+    builder.Services.AddScoped<IFileSystemStorageDirectoryStorage>(_ => storage);
+
+    var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
+}
+catch (Exception e)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    logger.Error(e, "Some error stopped the program");
+    throw;
+}
+finally
+{
+    NLog.LogManager.Shutdown();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

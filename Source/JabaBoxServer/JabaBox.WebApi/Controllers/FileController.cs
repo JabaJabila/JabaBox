@@ -18,12 +18,14 @@ public class FileController
     private readonly IStorageDirectoryMapper _storageDirectoryMapper;
     private readonly IStorageFileMapper _storageFileMapper;
     private readonly ICompressor _compressor;
+    private readonly ILogger<FileController> _logger;
 
     public FileController(
         IAccountService accountService,
         IStorageService storageService,
         IStorageDirectoryMapper storageDirectoryMapper, 
-        IStorageFileMapper storageFileMapper, ICompressor compressor)
+        IStorageFileMapper storageFileMapper, ICompressor compressor,
+        ILogger<FileController> logger)
     {
         _accountService = accountService ?? throw new ArgumentNullException(nameof(accountService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
@@ -31,6 +33,7 @@ public class FileController
             storageDirectoryMapper ?? throw new ArgumentNullException(nameof(storageDirectoryMapper));
         _storageFileMapper = storageFileMapper ?? throw new ArgumentNullException(nameof(storageFileMapper));
         _compressor = compressor ?? throw new ArgumentNullException(nameof(compressor));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     [HttpGet]
@@ -49,14 +52,17 @@ public class FileController
             if (storageDirectory is null)
                 throw new DirectoryException($"Directory \'{directoryName}\' not found");
                 
+            _logger.LogInformation("File was found");
             return new OkObjectResult(_storageDirectoryMapper.EntityToDto(storageDirectory));
         }
         catch (JabaBoxException e)
         {
+            _logger.LogInformation(e, "");
             return new NotFoundObjectResult(e.Message);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "");
             return new StatusCodeResult((int) HttpStatusCode.BadRequest);
         }
     }
@@ -91,19 +97,23 @@ public class FileController
             {
                 fileBytes = _compressor.Compress(fileBytes);
                 state = FileState.Compressed;
+                _logger.LogInformation("file was compressed before saving");
             }
 
             StorageFile storageFile = _storageService.AddFile(
                 accountInfo, storageDirectory, state, file.FileName, fileBytes);
             
+            _logger.LogInformation("file was uploaded");
             return new OkObjectResult(_storageFileMapper.EntityToDto(storageFile));
         }
         catch (JabaBoxException e)
         {
+            _logger.LogInformation(e, "");
             return new NotFoundObjectResult(e.Message);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "");
             return new StatusCodeResult((int) HttpStatusCode.BadRequest);
         }
     }
@@ -135,14 +145,17 @@ public class FileController
                 throw new FileException($"File \'{fileName}\' not found");
 
             storageFile = _storageService.RenameFile(accountInfo, storageDirectory, storageFile, newName);
+            _logger.LogInformation("file was renamed");
             return new OkObjectResult(_storageFileMapper.EntityToDto(storageFile));
         }
         catch (JabaBoxException e)
         {
+            _logger.LogInformation(e, "");
             return new NotFoundObjectResult(e.Message);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "");
             return new StatusCodeResult((int) HttpStatusCode.BadRequest);
         }
     }
@@ -171,14 +184,17 @@ public class FileController
                 throw new FileException($"File \'{fileName}\' not found");
             
             _storageService.DeleteFile(accountInfo, storageDirectory, storageFile);
+            _logger.LogInformation("File was deleted");
             return new OkResult();
         }
         catch (JabaBoxException e)
         {
+            _logger.LogInformation(e, "");
             return new NotFoundObjectResult(e.Message);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "");
             return new StatusCodeResult((int) HttpStatusCode.BadRequest);
         }
     }
@@ -211,6 +227,7 @@ public class FileController
             if (storageFile.State == FileState.Compressed)
             {
                 data = _compressor.Decompress(data);
+                _logger.LogInformation("Decompressed file");
             }
 
             var result = new FileStreamResult(new MemoryStream(data), "application/octet-stream")
@@ -218,14 +235,17 @@ public class FileController
                 FileDownloadName = fileName,
             };
             
+            _logger.LogInformation("file found and ready to download");
             return result;
         }
         catch (JabaBoxException e)
         {
+            _logger.LogInformation(e, "");
             return new NotFoundObjectResult(e.Message);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "");
             return new StatusCodeResult((int) HttpStatusCode.BadRequest);
         }
     }
