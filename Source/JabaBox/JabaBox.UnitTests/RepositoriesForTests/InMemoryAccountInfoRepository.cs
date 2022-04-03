@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using JabaBox.Core.Domain.Entities;
 using JabaBox.Core.RepositoryAbstractions;
 using JabaBox.UnitTests.DbContextsForTests;
-using JabaBox.UnitTests.RepositoriesForTests;
-using Microsoft.EntityFrameworkCore;
 
 namespace JabaBox.UnitTests.RepositoriesForTests;
 

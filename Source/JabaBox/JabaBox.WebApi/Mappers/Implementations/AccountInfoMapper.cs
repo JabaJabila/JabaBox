@@ -1,5 +1,4 @@
 ﻿using JabaBox.Core.Domain.Entities;
-using JabaBox.Core.RepositoryAbstractions;
 using JabaBox.WebApi.Dto;
 using JabaBox.WebApi.Mappers.Abstractions;
 

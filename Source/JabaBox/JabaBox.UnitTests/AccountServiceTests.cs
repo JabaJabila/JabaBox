@@ -42,7 +42,7 @@ public class AccountServiceTests
         int gigabytes,
         string differentPassword)
     {
-        var account = _accountService.RegisterAccount(login, password, gigabytes);
+        _accountService.RegisterAccount(login, password, gigabytes);
         Assert.Throws<AccountInfoException>(() =>
         {
             _accountService.RegisterAccount(login, differentPassword, gigabytes);
