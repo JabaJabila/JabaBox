@@ -43,8 +43,8 @@ public class AccountController
 
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
-                issuer: AuthOptions.Issuer,
-                audience: AuthOptions.Audience,
+                AuthOptions.Issuer,
+                AuthOptions.Audience,
                 notBefore: now,
                 claims: identity.Claims,
                 expires: now.Add(TimeSpan.FromMinutes(AuthOptions.Lifetime)),
@@ -77,12 +77,9 @@ public class AccountController
     [HttpGet("me")]
     public ActionResult AccountInfo()
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-    
             AccountInfo accountInfo = _accountService.GetAccount(login);
             _logger.LogInformation("Account was successfully found");
             return new OkObjectResult(_accountMapper.EntityToDto(accountInfo));
@@ -100,7 +97,10 @@ public class AccountController
     }
     
     [HttpPost("register-account")]
-    public ActionResult RegisterAccount([Required] string login, [Required]  string password, [Required]  int gigabytePlan)
+    public ActionResult RegisterAccount(
+        [Required] string login, 
+        [Required]  string password, 
+        [Required]  int gigabytePlan)
     {
         try
         {
@@ -133,12 +133,9 @@ public class AccountController
     [HttpPut("me/change-password")]
     public ActionResult ChangePassword([Required] string password, [Required] string newPassword)
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-            
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentNullException(nameof(password));
 
@@ -165,12 +162,9 @@ public class AccountController
     [HttpPut("me/change-plan")]
     public ActionResult ChangeGigabytePlan([Required] int newGigabytes)
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-
             if (newGigabytes <= 0)
                 throw new AccountInfoException("Impossible to change gigabyte plan to <= 0 gigabytes");
 

@@ -156,7 +156,7 @@ public class StorageServiceTests
     {
         var account = _accountService.RegisterAccount(login, password, gigabytes);
         var dir = _storageService.CreateDirectory(account, dirName);
-        var file = _storageService.AddFile(account, dir, FileState.Normal, fileName, data);
+        _storageService.AddFile(account, dir, FileState.Normal, fileName, data);
         Assert.Throws<FileException>(() =>
         {
             _storageService.AddFile(account, dir, FileState.Normal, fileName, data);
@@ -250,6 +250,7 @@ public class StorageServiceTests
         var file = _storageService.AddFile(account, dir, FileState.Normal, fileName, data);
         _storageService.DeleteFile(account, dir, file);
         Assert.Null(_storageService.FindFile(account, dir, fileName));
+        Assert.AreEqual(0,  gigabytes * 1024L * 1024L * 1024L - _storageService.BytesAvailable(account));
     }
     
     [TestCase("admin", "12345", 1, "directory", "t1.txt", 
@@ -273,5 +274,32 @@ public class StorageServiceTests
         {
             _storageService.DeleteFile(account2, dir2, file);
         });
+    }
+    
+    [TestCase("admin", "12345", 1, "directory", "t1.txt", 
+        new byte[] {0x20, 0x12, 0x20, 0x12, 0x20, 0x12}, "t2.txt",
+        new byte[] {0x20, 0x12, 0x20, 0x12, 0x20, 0x12, 0x20, 0x12, 0x20, 0x12, 0x20, 0x12})]
+    [TestCase("jaba", "qwerty", 1, "docs", "doc1.docx",
+        new byte[] {0x13, 0x11, 0x20, 0x12, 0x13, 0x11, 0x20, 0x12, 0x13, 0x11, 0x20, 0x12}, "doc2.docx",
+        new byte[] {0x20, 0x12, 0x20, 0x12, 0x20, 0x12})]
+    public void DeleteDirectoryWith2Files_DirectoryANdFilesDeleted(
+        string login, 
+        string password, 
+        int gigabytes, 
+        string dirName, 
+        string file1Name, 
+        byte[] data1,
+        string file2Name,
+        byte[] data2)
+    {
+        var account = _accountService.RegisterAccount(login, password, gigabytes);
+        var dir = _storageService.CreateDirectory(account, dirName);
+        _storageService.AddFile(account, dir, FileState.Normal, file1Name, data1);
+        _storageService.AddFile(account, dir, FileState.Compressed, file2Name, data2);
+        _storageService.DeleteDirectory(account, dir);
+        Assert.Null(_storageService.FindFile(account, dir, file1Name));
+        Assert.Null(_storageService.FindFile(account, dir, file2Name));
+        Assert.IsEmpty(_storageService.GetBaseDirectory(account).Directories);
+        Assert.AreEqual(0,  gigabytes * 1024L * 1024L * 1024L - _storageService.BytesAvailable(account));
     }
 }

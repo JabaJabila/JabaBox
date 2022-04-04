@@ -45,12 +45,9 @@ public class FileController
     [HttpGet("{directoryName}")]
     public ActionResult GetFiles([Required] string directoryName)
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-            
             if (string.IsNullOrWhiteSpace(directoryName))
                 throw new ArgumentNullException(nameof(directoryName));
 
@@ -78,14 +75,10 @@ public class FileController
     [HttpPost("{directoryName}/upload")]
     public ActionResult UploadFile([Required] string directoryName, [Required] IFormFile file, bool compress = false)
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
             ArgumentNullException.ThrowIfNull(file);
-            
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-            
             if (string.IsNullOrWhiteSpace(directoryName))
                 throw new ArgumentNullException(nameof(directoryName));
 
@@ -129,14 +122,14 @@ public class FileController
     
     [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPut("{directoryName}/{fileName}/rename")]
-    public ActionResult RenameFile([Required] string directoryName, [Required] string fileName, [Required] string newName)
+    public ActionResult RenameFile(
+        [Required] string directoryName,
+        [Required] string fileName,
+        [Required] string newName)
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-            
             if (string.IsNullOrWhiteSpace(directoryName))
                 throw new ArgumentNullException(nameof(directoryName));
             
@@ -175,12 +168,9 @@ public class FileController
     [HttpDelete("{directoryName}/{fileName}/delete")]
     public ActionResult DeleteFile([Required] string directoryName, [Required] string fileName)
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-            
             if (string.IsNullOrWhiteSpace(directoryName))
                 throw new ArgumentNullException(nameof(directoryName));
             
@@ -216,12 +206,9 @@ public class FileController
     [HttpGet("{directoryName}/{fileName}/download")]
     public ActionResult DownloadFile([Required] string directoryName, [Required] string fileName)
     {
-        string login = _httpContextAccessor.HttpContext.User.Identity.Name;
+        string login = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
         try
         {
-            if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentNullException(nameof(login));
-
             if (string.IsNullOrWhiteSpace(directoryName))
                 throw new ArgumentNullException(nameof(directoryName));
 

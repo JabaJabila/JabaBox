@@ -11,7 +11,7 @@ public sealed class JabaBoxDbContext : DbContext
         : base(options)
     {
         // Database.EnsureDeleted();
-        Database.EnsureCreated();
+        // Database.EnsureCreated();
     }
     
     public DbSet<AccountInfo> AccountInfos { get; set; }

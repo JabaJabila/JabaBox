@@ -42,7 +42,7 @@ public class AccountServiceTests
         int gigabytes,
         string differentPassword)
     {
-        var account = _accountService.RegisterAccount(login, password, gigabytes);
+        _accountService.RegisterAccount(login, password, gigabytes);
         Assert.Throws<AccountInfoException>(() =>
         {
             _accountService.RegisterAccount(login, differentPassword, gigabytes);
@@ -90,6 +90,7 @@ public class AccountServiceTests
         var account = _accountService.RegisterAccount(login, password, gigabytes);
         _accountService.ChangeGigabytesPlan(login, newGigabytes);
         var foundAcc = _accountService.GetAccount(login);
+        
         Assert.True(foundAcc.Login == login && foundAcc.Password == password && foundAcc.GigabytesAvailable == newGigabytes);
     }
     
@@ -101,7 +102,8 @@ public class AccountServiceTests
         int gigabytes,
         int newGigabytes)
     {
-        var account = _accountService.RegisterAccount(login, password, gigabytes);
+        _accountService.RegisterAccount(login, password, gigabytes);
+        
         Assert.Throws<AccountInfoException>(() =>
         {
             _accountService.ChangeGigabytesPlan(login, newGigabytes);
